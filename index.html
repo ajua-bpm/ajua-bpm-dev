@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="refresh" content="0; url=dashboard_empaque.html">
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#081E10">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AgriChain PRO">
+<!-- Iconos -->
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<title>AgriChain PRO · AJÚA</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#081E10;display:flex;align-items:center;justify-content:center;height:100vh;font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
+  .loader{text-align:center;}
+  .logo{font-size:48px;margin-bottom:16px;animation:bounce .8s infinite alternate;}
+  .txt{font-size:1rem;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.08em;text-transform:uppercase;}
+  .sub{font-size:.75rem;color:rgba(255,255,255,.3);margin-top:6px;}
+  .bar{width:180px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin:18px auto 0;overflow:hidden;}
+  .fill{height:100%;background:linear-gradient(90deg,#348C52,#84CC96);border-radius:2px;animation:load .8s ease-out forwards;}
+  @keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-8px);}}
+  @keyframes load{from{width:0;}to{width:100%;}}
+  a{color:#84CC96;font-size:.78rem;margin-top:14px;display:block;opacity:.6;}
+</style>
+</head>
+<body>
+<div class="loader">
+  <div class="logo">🥦</div>
+  <div class="txt">AgriChain PRO</div>
+  <div class="sub">Agroindustria AJÚA · v3.0 · 2026</div>
+  <div class="bar"><div class="fill"></div></div>
+  <a href="dashboard_empaque.html">Ir al dashboard →</a>
+</div>
+</body>
+</html>

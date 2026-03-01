@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AgriChain Pro — Multi-Empresa & APIs</title>
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║  AGRICHAIN PRO v3.0                                          ║
+║  Módulo: Multi-Empresa & APIs  (Perfil: Empacador)           ║
+║  Build:  2026-03-01  21:41 UTC                               ║
+║  Deps:   dashboard_empaque.html                              ║
+╚══════════════════════════════════════════════════════════════╝
+-->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --g9:#04100A;--g8:#081E10;--g4:#27703F;--g3:#348C52;--g2:#52AA6E;--g1:#84CC96;
+  --p9:#F6F2E2;--p8:#EDE9D6;--p7:#E3DFCA;--p6:#D4CFBA;
+  --gold:#F0B429;--gold2:#FAD163;--gold3:#D49420;
+  --ok:#16A34A;--warn:#D97706;--err:#DC2626;--info:#2563EB;--teal:#0D9488;--lilac:#7C3AED;
+  --bg:#EDE9D6;--card:#FAFAF4;--card2:#F3F0E2;--bdr:#DDD9C8;--bdr2:#C8C4B0;
+  --sb:#081E10;--sb2:rgba(255,255,255,.055);--sb3:rgba(255,255,255,.08);--sba:rgba(84,204,150,.12);
+  --t1:#18201A;--t2:#363D32;--t3:#64706A;--t4:#96A09A;
+  --ti1:rgba(255,255,255,.92);--ti2:rgba(255,255,255,.55);--ti3:rgba(255,255,255,.26);
+  --fd:'Outfit',system-ui,sans-serif;--fb:'Plus Jakarta Sans',system-ui,sans-serif;--fm:'JetBrains Mono',monospace;
+  --r1:6px;--r2:10px;--r3:14px;--r4:20px;--r5:28px;
+  --s1:0 1px 3px rgba(4,16,10,.08);--s2:0 4px 16px rgba(4,16,10,.10);--s3:0 10px 36px rgba(4,16,10,.13);--s4:0 20px 60px rgba(4,16,10,.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--fb);background:var(--bg);color:var(--t1);line-height:1.55;-webkit-font-smoothing:antialiased;}
+a{text-decoration:none;color:inherit;}
+button,input,select,textarea{font-family:var(--fb);}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--p8);}
+::-webkit-scrollbar-thumb{background:rgba(39,112,63,.3);border-radius:3px;}
+
+/* SHELL */
+.shell{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:258px;flex-shrink:0;background:var(--sb);display:flex;flex-direction:column;border-right:1px solid var(--sb3);position:relative;overflow:hidden;}
+.sidebar::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 28% 18%,rgba(52,140,82,.08) 0%,transparent 55%);}
+.sb-head{padding:18px 14px 14px;border-bottom:1px solid var(--sb3);flex-shrink:0;}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.brand-logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--g4),var(--g1));display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 2px 14px rgba(52,140,82,.38);flex-shrink:0;}
+.brand-name{font-family:var(--fd);font-size:.97rem;font-weight:800;color:var(--ti1);}
+.brand-ver{font-size:.56rem;color:var(--g1);font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.7;}
+.tenant-pill{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.045);border:1px solid var(--sb3);border-radius:var(--r3);padding:8px 10px;cursor:pointer;transition:all .13s;}
+.tenant-pill:hover{background:rgba(255,255,255,.09);}
+.tp-ico{width:29px;height:29px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.tp-name{font-size:.77rem;font-weight:700;color:var(--ti1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tp-type{font-size:.6rem;color:var(--ti3);}
+.sb-nav{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:1px;}
+.nav-section{font-size:.57rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--ti3);padding:10px 8px 4px;margin-top:4px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:var(--r3);cursor:pointer;transition:all .13s;text-decoration:none;border:1px solid transparent;}
+.nav-item:hover{background:var(--sb2);}
+.nav-item.active{background:var(--sba);border-color:rgba(84,204,150,.22);}
+.ni-ico{width:30px;height:30px;border-radius:var(--r2);background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.nav-item.active .ni-ico{background:rgba(84,204,150,.2);}
+.nav-item:hover .ni-ico{background:rgba(255,255,255,.1);}
+.ni-text{flex:1;min-width:0;}
+.ni-label{font-size:.8rem;font-weight:600;color:var(--ti2);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ni-sub{font-size:.6rem;color:var(--ti3);display:block;}
+.nav-item:hover .ni-label,.nav-item.active .ni-label{color:var(--ti1);}
+.nav-item.active .ni-label{color:var(--g0);font-weight:700;}
+.nb-red{padding:2px 7px;border-radius:100px;font-size:.58rem;font-weight:800;flex-shrink:0;background:var(--err);color:#fff;}
+.nb-gold{padding:2px 7px;border-radius:100px;font-size:.58rem;font-weight:800;flex-shrink:0;background:var(--gold);color:var(--g9);}
+.sb-foot{padding:12px 10px;border-top:1px solid var(--sb3);flex-shrink:0;}
+.sb-user{display:flex;align-items:center;gap:9px;padding:8px;border-radius:var(--r3);cursor:pointer;}
+.sb-user:hover{background:var(--sb2);}
+.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;}
+.u-name{font-size:.8rem;font-weight:700;color:var(--ti1);}
+.u-role{font-size:.61rem;color:var(--ti3);}
+
+/* MAIN */
+.main-wrap{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:62px;background:var(--card);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 28px;gap:14px;flex-shrink:0;box-shadow:var(--s1);}
+.bc{display:flex;align-items:center;gap:6px;flex:1;}
+.bc-link{font-size:.8rem;color:var(--t3);}
+.bc-link:hover{color:var(--t2);}
+.bc-sep{color:var(--t4);}
+.bc-cur{font-size:.8rem;font-weight:700;color:var(--t1);}
+.tb-right{display:flex;align-items:center;gap:9px;}
+.page{flex:1;overflow-y:auto;padding:28px 28px 56px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--r3);border:none;cursor:pointer;font-family:var(--fb);font-size:.83rem;font-weight:700;transition:all .13s;white-space:nowrap;line-height:1;}
+.btn-primary{background:linear-gradient(135deg,var(--g4),var(--g2));color:#fff;box-shadow:0 3px 12px rgba(39,112,63,.3);}
+.btn-primary:hover{transform:translateY(-1px);}
+.btn-ghost{background:var(--card2);color:var(--t2);border:1px solid var(--bdr);}
+.btn-ghost:hover{background:var(--p7);}
+.btn-danger{background:rgba(220,38,38,.08);color:var(--err);border:1.5px solid rgba(220,38,38,.22);}
+.btn-danger:hover{background:rgba(220,38,38,.15);}
+.btn-sm{padding:6px 14px;font-size:.77rem;border-radius:var(--r2);}
+.btn-xs{padding:4px 9px;font-size:.69rem;border-radius:var(--r1);}
+.btn-full{width:100%;justify-content:center;}
+
+/* CHIPS */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:100px;font-size:.71rem;font-weight:700;white-space:nowrap;line-height:1.5;}
+.chip-green{background:rgba(22,163,74,.1);color:#166534;border:1px solid rgba(22,163,74,.22);}
+.chip-gold{background:rgba(217,119,6,.1);color:#92400E;border:1px solid rgba(217,119,6,.22);}
+.chip-red{background:rgba(220,38,38,.1);color:#991B1B;border:1px solid rgba(220,38,38,.22);}
+.chip-blue{background:rgba(37,99,235,.1);color:#1E3A8A;border:1px solid rgba(37,99,235,.22);}
+.chip-teal{background:rgba(13,148,136,.1);color:#134E4A;border:1px solid rgba(13,148,136,.22);}
+.chip-gray{background:var(--card2);color:var(--t3);border:1px solid var(--bdr);}
+.chip-lilac{background:rgba(124,58,237,.1);color:#4C1D95;border:1px solid rgba(124,58,237,.22);}
+
+/* PAGE HEADER */
+.ph{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:24px;}
+.ph-title{font-family:var(--fd);font-size:1.75rem;font-weight:900;color:var(--g8);line-height:1.1;letter-spacing:-.02em;margin-bottom:5px;}
+.ph-sub{font-size:.82rem;color:var(--t3);}
+.ph-r{display:flex;gap:9px;align-items:center;flex-wrap:wrap;}
+
+/* TABS */
+.tab-bar{display:flex;background:var(--card);border:1px solid var(--bdr);border-radius:var(--r3);padding:4px;gap:3px;margin-bottom:20px;overflow-x:auto;}
+.tab-btn{flex:1;min-width:80px;padding:8px 12px;border-radius:var(--r2);font-size:.79rem;font-weight:700;cursor:pointer;transition:all .13s;text-align:center;color:var(--t3);border:none;background:transparent;white-space:nowrap;}
+.tab-btn:hover{color:var(--t2);}
+.tab-btn.on{background:var(--g4);color:#fff;box-shadow:0 2px 8px rgba(39,112,63,.28);}
+.tab-pane{display:none;}
+.tab-pane.on{display:block;}
+
+/* COMPANY CARDS */
+.company-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px;}
+@media(max-width:1100px){.company-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){.company-grid{grid-template-columns:1fr;}}
+.comp-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r4);padding:20px;transition:all .2s;position:relative;overflow:hidden;}
+.comp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;}
+.comp-card:hover{box-shadow:var(--s2);}
+.comp-card.active-co{border-color:var(--g3);}
+.comp-card.active-co::before{background:linear-gradient(90deg,var(--g3),var(--g1));}
+.comp-card.other::before{background:linear-gradient(90deg,var(--info),#60A5FA);}
+.cc-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;}
+.cc-ico{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.cc-name{font-family:var(--fd);font-size:1rem;font-weight:900;color:var(--g8);}
+.cc-type{font-size:.72rem;color:var(--t3);}
+.cc-nit{font-family:var(--fm);font-size:.63rem;color:var(--t4);margin-top:2px;}
+.cc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px;}
+.cs-box{text-align:center;padding:7px;background:var(--card2);border-radius:var(--r1);}
+.cs-v{font-family:var(--fd);font-size:.95rem;font-weight:900;color:var(--g8);}
+.cs-l{font-size:.57rem;color:var(--t3);}
+
+/* API CARDS */
+.api-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+@media(max-width:900px){.api-grid{grid-template-columns:1fr;}}
+.api-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r4);padding:20px;}
+.ac-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.ac-title{font-family:var(--fd);font-size:.97rem;font-weight:800;color:var(--g8);}
+.api-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--p8);}
+.api-row:last-child{border-bottom:none;}
+.ar-ico{width:30px;height:30px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.ar-name{font-size:.81rem;font-weight:700;color:var(--t1);flex:1;}
+.ar-val{font-family:var(--fm);font-size:.7rem;color:var(--t3);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dot-ok{background:var(--g1);}
+.dot-warn{background:var(--gold);}
+.dot-err{background:var(--err);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+.dot-ok{animation:pulse 2.4s infinite;}
+
+/* CONFIG FORM */
+.cfg-section{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r4);padding:20px;margin-bottom:18px;}
+.cfg-title{font-family:var(--fd);font-size:.97rem;font-weight:800;color:var(--g8);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.cfg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+@media(max-width:700px){.cfg-grid{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:4px;}
+.fl{font-size:.77rem;font-weight:700;color:var(--t2);}
+.fi,.fs,.fta{padding:9px 13px;background:var(--card2);border:1.5px solid var(--bdr);border-radius:var(--r2);font-size:.82rem;color:var(--t1);outline:none;transition:all .13s;width:100%;}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--g2);background:var(--card);box-shadow:0 0 0 3px rgba(82,170,110,.18);}
+
+/* KEY DISPLAY */
+.key-box{display:flex;align-items:center;gap:8px;background:var(--g9);border-radius:var(--r2);padding:10px 14px;}
+.kb-key{font-family:var(--fm);font-size:.75rem;color:var(--g1);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.04em;}
+.kb-copy{width:26px;height:26px;border-radius:var(--r1);border:1px solid rgba(255,255,255,.15);background:transparent;color:var(--ti2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .13s;flex-shrink:0;}
+.kb-copy:hover{background:rgba(255,255,255,.12);color:var(--ti1);}
+
+/* USERS TABLE */
+.tbl-wrap{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r4);overflow:hidden;}
+.tbl-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--bdr);flex-wrap:wrap;gap:10px;}
+.tbl-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--p9);}
+th{padding:10px 14px;text-align:left;font-size:.66rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);white-space:nowrap;border-bottom:1px solid var(--bdr);}
+td{padding:11px 14px;border-bottom:1px solid var(--p8);font-size:.8rem;color:var(--t2);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:rgba(39,112,63,.025);}
+.td-bold{font-weight:800;color:var(--t1);}
+.td-mono{font-family:var(--fm);font-size:.74rem;}
+.td-muted{font-size:.72rem;color:var(--t4);}
+.row-acts{display:flex;gap:5px;}
+.ra-btn{width:28px;height:28px;border-radius:var(--r1);border:1px solid var(--bdr);background:transparent;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;transition:all .13s;color:var(--t3);}
+.ra-btn:hover{background:var(--card2);color:var(--t1);}
+.ra-del:hover{background:rgba(220,38,38,.08);border-color:rgba(220,38,38,.25);color:var(--err);}
+
+/* TOGGLE SWITCH */
+.toggle-wrap{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--p8);}
+.toggle-wrap:last-child{border-bottom:none;}
+.tg-info{font-size:.81rem;font-weight:600;color:var(--t1);}
+.tg-sub{font-size:.7rem;color:var(--t3);margin-top:2px;}
+.toggle{width:40px;height:22px;border-radius:11px;background:var(--p6);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:var(--g3);}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.toggle.on::after{left:21px;}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(4,16,10,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;opacity:0;pointer-events:none;transition:opacity .22s;}
+.modal-bg.open{opacity:1;pointer-events:all;}
+.modal-box{background:var(--card);border-radius:var(--r5);padding:28px;width:100%;max-width:520px;box-shadow:var(--s4);transform:translateY(24px) scale(.97);transition:transform .22s;border:1px solid var(--bdr);max-height:90vh;overflow-y:auto;}
+.modal-bg.open .modal-box{transform:translateY(0) scale(1);}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
+.modal-title{font-family:var(--fd);font-size:1.2rem;font-weight:900;color:var(--g8);}
+.modal-close{width:32px;height:32px;border-radius:var(--r2);border:1px solid var(--bdr);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .13s;color:var(--t3);}
+.modal-close:hover{background:var(--card2);}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;padding-top:18px;border-top:1px solid var(--bdr);}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--g9);color:var(--ti1);padding:12px 18px;border-radius:var(--r3);display:flex;align-items:center;gap:10px;font-size:.82rem;font-weight:600;box-shadow:var(--s3);transform:translateX(120px);opacity:0;transition:all .28s cubic-bezier(.4,0,.2,1);z-index:2000;max-width:380px;pointer-events:none;border-left:3px solid;}
+.toast.show{transform:translateX(0);opacity:1;}
+.toast.ok{border-left-color:var(--g1);}.toast.warn{border-left-color:var(--gold2);}
+.toast.error{border-left-color:#F87171;}.toast.info{border-left-color:#60A5FA;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.anim{animation:fadeUp .38s cubic-bezier(0,0,.2,1) forwards;}
+.d1{animation-delay:.07s;opacity:0;}.d2{animation-delay:.14s;opacity:0;}.d3{animation-delay:.21s;opacity:0;}
+.build-stamp{position:fixed;bottom:10px;left:12px;font-family:var(--fm);font-size:.58rem;color:rgba(0,0,0,.3);background:rgba(255,255,255,.68);padding:3px 9px;border-radius:4px;z-index:9999;pointer-events:none;}
+
+@media(max-width:768px){
+  .shell{flex-direction:column;height:auto;min-height:100vh;}
+  .sidebar{display:none;}
+  .page{padding:16px 16px 44px;}
+  .topbar{padding:0 16px;}
+  .ph-title{font-size:1.4rem;}
+  .hide-m{display:none!important;}
+  .company-grid,.api-grid{grid-template-columns:1fr!important;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-head">
+      <div class="brand">
+        <div class="brand-logo">🏭</div>
+        <div><div class="brand-name">AGRICHAIN PRO</div><div class="brand-ver">Empacador · v3.0 · 2026</div></div>
+      </div>
+      <div class="tenant-pill">
+        <div class="tp-ico" style="background:linear-gradient(135deg,var(--g4),var(--g1))">🥦</div>
+        <div style="flex:1;overflow:hidden"><div class="tp-name">Agroindustria AJÚA</div><div class="tp-type">Empacador · GT · HN</div></div>
+        <span style="color:var(--ti3);font-size:.75rem">⌄</span>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <span class="nav-section">Principal</span>
+      <a href="dashboard_empaque.html" class="nav-item"><div class="ni-ico">📊</div><div class="ni-text"><span class="ni-label">Dashboard</span></div></a>
+      <span class="nav-section">Operaciones</span>
+      <a href="logistica.html" class="nav-item"><div class="ni-ico">📦</div><div class="ni-text"><span class="ni-label">Pedidos & Logística</span></div><span class="nb-gold">7</span></a>
+      <a href="bpm.html" class="nav-item"><div class="ni-ico">🔬</div><div class="ni-text"><span class="ni-label">Control BPM</span></div></a>
+      <span class="nav-section">Finanzas</span>
+      <a href="finanzas.html" class="nav-item"><div class="ni-ico">💰</div><div class="ni-text"><span class="ni-label">Facturación & FEL</span></div><span class="nb-red">3</span></a>
+      <span class="nav-section">Administración</span>
+      <a href="rrhh.html" class="nav-item"><div class="ni-ico">👥</div><div class="ni-text"><span class="ni-label">RRHH & Empleados</span></div></a>
+      <a href="empresa.html" class="nav-item active"><div class="ni-ico">⚙️</div><div class="ni-text"><span class="ni-label">Multi-Empresa & APIs</span><span class="ni-sub">Configuración</span></div></a>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-user">
+        <div class="avatar" style="background:linear-gradient(135deg,var(--gold3),var(--g2))">RS</div>
+        <div style="flex:1;overflow:hidden"><div class="u-name">Ricardo Sagastume</div><div class="u-role">Admin · AJÚA</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-wrap">
+    <div class="topbar">
+      <div class="bc">
+        <a href="dashboard_empaque.html" class="bc-link">Dashboard</a>
+        <span class="bc-sep">›</span>
+        <span class="bc-cur">Multi-Empresa & APIs</span>
+      </div>
+      <div class="tb-right">
+        <button class="btn btn-ghost btn-sm hide-m" onclick="showToast('📥 Exportando configuración…','info')">📥 Exportar</button>
+        <button class="btn btn-primary btn-sm" onclick="openModal('newEmpresaModal')">＋ Nueva empresa</button>
+      </div>
+    </div>
+
+    <div class="page">
+
+      <!-- Header -->
+      <div class="ph anim">
+        <div>
+          <h1 class="ph-title">⚙️ Multi-Empresa & APIs</h1>
+          <p class="ph-sub" id="phDate">— · 3 empresas · SAP · Ediwin CA · FEL 5 países</p>
+        </div>
+        <div class="ph-r">
+          <span class="chip chip-teal">🏭 Admin global</span>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-bar anim d1">
+        <button class="tab-btn on" id="tb-co" onclick="openTab('co','tb-co')">🏢 Empresas (3)</button>
+        <button class="tab-btn" id="tb-usr" onclick="openTab('usr','tb-usr')">👤 Usuarios & Roles</button>
+        <button class="tab-btn" id="tb-api" onclick="openTab('api','tb-api')">🔌 APIs & Conexiones</button>
+        <button class="tab-btn" id="tb-fel" onclick="openTab('fel','tb-fel')">🧾 Config FEL</button>
+        <button class="tab-btn" id="tb-cfg" onclick="openTab('cfg','tb-cfg')">🛠️ Configuración</button>
+      </div>
+
+      <!-- TAB: EMPRESAS -->
+      <div class="tab-pane on" id="pane-co">
+        <div class="company-grid">
+          <!-- AJÚA (activa) -->
+          <div class="comp-card active-co">
+            <div class="cc-head">
+              <div class="cc-ico" style="background:linear-gradient(135deg,var(--g4),var(--g1))">🥦</div>
+              <div style="flex:1">
+                <div class="cc-name">Agroindustria AJÚA</div>
+                <div class="cc-type">Empacador Premium · GT · HN</div>
+                <div class="cc-nit">NIT: 12345678-9 · SAT</div>
+              </div>
+              <span class="chip chip-green">Activa</span>
+            </div>
+            <div class="cc-stats">
+              <div class="cs-box"><div class="cs-v">32</div><div class="cs-l">Empleados</div></div>
+              <div class="cs-box"><div class="cs-v">34</div><div class="cs-l">Órdenes</div></div>
+              <div class="cs-box"><div class="cs-v">85%</div><div class="cs-l">BPM</div></div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+              <span class="chip chip-teal" style="font-size:.63rem">🇬🇹 GT·SAT</span>
+              <span class="chip chip-gold" style="font-size:.63rem">🇭🇳 HN·SAR</span>
+              <span class="chip chip-green" style="font-size:.63rem">EDI Walmart</span>
+              <span class="chip chip-blue" style="font-size:.63rem">SAP IDoc</span>
+            </div>
+            <button class="btn btn-ghost btn-sm btn-full" onclick="showToast('⚙️ Editando AJÚA…','info')">⚙️ Editar configuración</button>
+          </div>
+          <!-- Verduras del Campo -->
+          <div class="comp-card other">
+            <div class="cc-head">
+              <div class="cc-ico" style="background:linear-gradient(135deg,var(--info),#60A5FA)">🌽</div>
+              <div style="flex:1">
+                <div class="cc-name">Verduras del Campo S.A.</div>
+                <div class="cc-type">Empacador Estándar · SV · CR</div>
+                <div class="cc-nit">NRC: 98765-4 · MH El Salvador</div>
+              </div>
+              <span class="chip chip-blue">Activa</span>
+            </div>
+            <div class="cc-stats">
+              <div class="cs-box"><div class="cs-v">18</div><div class="cs-l">Empleados</div></div>
+              <div class="cs-box"><div class="cs-v">12</div><div class="cs-l">Órdenes</div></div>
+              <div class="cs-box"><div class="cs-v">79%</div><div class="cs-l">BPM</div></div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+              <span class="chip chip-blue" style="font-size:.63rem">🇸🇻 SV·MH</span>
+              <span class="chip chip-teal" style="font-size:.63rem">🇨🇷 CR·Hacienda</span>
+            </div>
+            <button class="btn btn-ghost btn-sm btn-full" onclick="switchCompany('Verduras del Campo')">🔄 Cambiar a esta empresa</button>
+          </div>
+          <!-- Orgánicos del Norte -->
+          <div class="comp-card other">
+            <div class="cc-head">
+              <div class="cc-ico" style="background:linear-gradient(135deg,var(--gold3),var(--gold2))">🍅</div>
+              <div style="flex:1">
+                <div class="cc-name">Orgánicos del Norte</div>
+                <div class="cc-type">Productor Pequeño · NI</div>
+                <div class="cc-nit">RUC: 0012345-678X · DGI Nicaragua</div>
+              </div>
+              <span class="chip chip-gold">Activa</span>
+            </div>
+            <div class="cc-stats">
+              <div class="cs-box"><div class="cs-v">6</div><div class="cs-l">Empleados</div></div>
+              <div class="cs-box"><div class="cs-v">4</div><div class="cs-l">Órdenes</div></div>
+              <div class="cs-box"><div class="cs-v">70%</div><div class="cs-l">BPM</div></div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+              <span class="chip chip-green" style="font-size:.63rem">🇳🇮 NI·DGI</span>
+            </div>
+            <button class="btn btn-ghost btn-sm btn-full" onclick="switchCompany('Orgánicos del Norte')">🔄 Cambiar a esta empresa</button>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('newEmpresaModal')">＋ Agregar empresa / tenant</button>
+      </div>
+
+      <!-- TAB: USUARIOS -->
+      <div class="tab-pane" id="pane-usr">
+        <div class="tbl-wrap">
+          <div class="tbl-head">
+            <div style="font-family:var(--fd);font-weight:800;color:var(--g8)">👤 Usuarios del sistema</div>
+            <button class="btn btn-primary btn-sm" onclick="openModal('newUserModal')">＋ Nuevo usuario</button>
+          </div>
+          <div class="tbl-scroll">
+            <table>
+              <thead><tr>
+                <th>Usuario</th><th>Correo</th><th>Rol</th>
+                <th>Empresa</th><th>Último acceso</th><th>Estado</th><th>Acciones</th>
+              </tr></thead>
+              <tbody id="userTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: APIs -->
+      <div class="tab-pane" id="pane-api">
+        <div class="api-grid">
+          <!-- Walmart EDI -->
+          <div class="api-card">
+            <div class="ac-head">
+              <div class="ac-title">📦 Walmart EDI</div>
+              <span class="chip chip-green">● Conectado</span>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(22,163,74,.1)">🔑</div>
+              <div style="flex:1"><div class="ar-name">API Key</div><div class="ar-val">wmt-edi-ak-****8f2c</div></div>
+              <button class="btn btn-ghost btn-xs" onclick="copyKey('wmt-edi-ak-prod-8f2c9d3a')">📋</button>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(37,99,235,.1)">🌐</div>
+              <div style="flex:1"><div class="ar-name">Endpoint AS2</div><div class="ar-val">edi.walmart.com:4080</div></div>
+              <div class="ar-dot dot-ok"></div>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(13,148,136,.1)">🔄</div>
+              <div style="flex:1"><div class="ar-name">Protocolos activos</div></div>
+              <div style="display:flex;gap:4px">
+                <span style="font-family:var(--fm);font-size:.6rem;padding:2px 5px;background:rgba(22,163,74,.1);color:#166534;border-radius:3px">850</span>
+                <span style="font-family:var(--fm);font-size:.6rem;padding:2px 5px;background:rgba(37,99,235,.1);color:#1E3A8A;border-radius:3px">856</span>
+                <span style="font-family:var(--fm);font-size:.6rem;padding:2px 5px;background:rgba(13,148,136,.1);color:#134E4A;border-radius:3px">810</span>
+                <span style="font-family:var(--fm);font-size:.6rem;padding:2px 5px;background:rgba(124,58,237,.1);color:#4C1D95;border-radius:3px">997</span>
+              </div>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(217,119,6,.1)">📅</div>
+              <div style="flex:1"><div class="ar-name">Certificado SSL</div><div class="ar-val">Vence 15/09/2026</div></div>
+              <div class="ar-dot dot-ok"></div>
+            </div>
+            <button class="btn btn-ghost btn-sm btn-full" style="margin-top:12px" onclick="testConn('Walmart EDI')">🧪 Probar conexión</button>
+          </div>
+
+          <!-- SAP S/4HANA -->
+          <div class="api-card">
+            <div class="ac-head">
+              <div class="ac-title">🏗️ SAP S/4HANA</div>
+              <span class="chip chip-green">● Conectado</span>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(22,163,74,.1)">🔑</div>
+              <div style="flex:1"><div class="ar-name">Client ID</div><div class="ar-val">sap-ajua-prod-****3b</div></div>
+              <button class="btn btn-ghost btn-xs" onclick="copyKey('sap-ajua-prod-client-3b9f')">📋</button>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(37,99,235,.1)">🌐</div>
+              <div style="flex:1"><div class="ar-name">SAP Host</div><div class="ar-val">s4h.ajua.gt:8443</div></div>
+              <div class="ar-dot dot-ok"></div>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(220,38,38,.1)">📄</div>
+              <div style="flex:1"><div class="ar-name">IDoc activos</div><div class="ar-val">DESADV01 · INVOIC02</div></div>
+              <div class="ar-dot dot-ok"></div>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(13,148,136,.1)">⚡</div>
+              <div style="flex:1"><div class="ar-name">Último IDoc</div><div class="ar-val">Hace 2 minutos</div></div>
+              <div class="ar-dot dot-ok"></div>
+            </div>
+            <button class="btn btn-ghost btn-sm btn-full" style="margin-top:12px" onclick="testConn('SAP S/4HANA')">🧪 Probar conexión</button>
+          </div>
+
+          <!-- Ediwin CA -->
+          <div class="api-card">
+            <div class="ac-head">
+              <div class="ac-title">🔗 Ediwin CA · Certificador</div>
+              <span class="chip chip-green">● Conectado</span>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(22,163,74,.1)">🔑</div>
+              <div style="flex:1"><div class="ar-name">API Token</div><div class="ar-val">ew-ca-tok-****f92a</div></div>
+              <button class="btn btn-ghost btn-xs" onclick="copyKey('ew-ca-token-ajua-f92a8c1d')">📋</button>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(37,99,235,.1)">🌐</div>
+              <div style="flex:1"><div class="ar-name">Endpoint</div><div class="ar-val">api.ediwinCA.com/v2</div></div>
+              <div class="ar-dot dot-ok"></div>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(124,58,237,.1)">📦</div>
+              <div style="flex:1"><div class="ar-name">Protocolo</div><div class="ar-val">AS2 · SFTP · REST</div></div>
+              <div class="ar-dot dot-ok"></div>
+            </div>
+            <button class="btn btn-ghost btn-sm btn-full" style="margin-top:12px" onclick="testConn('Ediwin CA')">🧪 Probar conexión</button>
+          </div>
+
+          <!-- AgriChain API -->
+          <div class="api-card">
+            <div class="ac-head">
+              <div class="ac-title">🌿 AgriChain API (este sistema)</div>
+              <span class="chip chip-green">● Activo</span>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(22,163,74,.1)">🔑</div>
+              <div style="flex:1"><div class="ar-name">API Key pública</div></div>
+              <button class="btn btn-ghost btn-xs" onclick="regenKey()">🔄 Regenerar</button>
+            </div>
+            <div class="key-box" style="margin:8px 0">
+              <span class="kb-key" id="apiKeyDisplay">ac-pk-ajua-2026-a3f9b2c1d4e5f678901234abcdef</span>
+              <button class="kb-copy" onclick="copyKey(document.getElementById('apiKeyDisplay').textContent)">📋</button>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(13,148,136,.1)">📊</div>
+              <div style="flex:1"><div class="ar-name">Llamadas este mes</div><div class="ar-val">4,821 / 50,000</div></div>
+              <div class="ar-dot dot-ok"></div>
+            </div>
+            <div class="api-row">
+              <div class="ar-ico" style="background:rgba(217,119,6,.1)">📅</div>
+              <div style="flex:1"><div class="ar-name">Plan</div><div class="ar-val">Pro · Vence 31/12/2026</div></div>
+              <div class="ar-dot dot-ok"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: FEL CONFIG -->
+      <div class="tab-pane" id="pane-fel">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <!-- GT SAT -->
+          <div class="cfg-section" style="margin-bottom:0">
+            <div class="cfg-title">🇬🇹 Guatemala · SAT FEL <span class="chip chip-green">✅ Activo</span></div>
+            <div class="fg"><label class="fl">NIT empresa</label><input class="fi" value="12345678-9"></div>
+            <div class="fg"><label class="fl">Razón social</label><input class="fi" value="Agroindustria AJÚA S.A."></div>
+            <div class="fg"><label class="fl">Certificador autorizado</label><select class="fs"><option selected>Ediwin CA Guatemala</option><option>INFILE</option><option>G4S</option></select></div>
+            <div class="fg"><label class="fl">Serie de facturación</label><input class="fi" value="FACT-A"></div>
+            <button class="btn btn-ghost btn-sm" onclick="testFEL('GT')">🧪 Test SAT</button>
+          </div>
+          <!-- HN SAR -->
+          <div class="cfg-section" style="margin-bottom:0">
+            <div class="cfg-title">🇭🇳 Honduras · SAR FEL <span class="chip chip-red">⚠️ Sin conexión</span></div>
+            <div class="fg"><label class="fl">RTN empresa</label><input class="fi" value="0801-1990-00123456"></div>
+            <div class="fg"><label class="fl">Razón social</label><input class="fi" value="AJÚA Honduras S.A. de C.V."></div>
+            <div class="fg"><label class="fl">Certificador</label><select class="fs"><option selected>HENMAS</option><option>Seguridata HN</option></select></div>
+            <div class="fg"><label class="fl">Serie</label><input class="fi" value="FEL-001"></div>
+            <button class="btn btn-ghost btn-sm" onclick="testFEL('HN')">🧪 Reconectar SAR</button>
+          </div>
+          <!-- SV MH -->
+          <div class="cfg-section" style="margin-bottom:0">
+            <div class="cfg-title">🇸🇻 El Salvador · MH DTE <span class="chip chip-green">✅ Activo</span></div>
+            <div class="fg"><label class="fl">NRC empresa</label><input class="fi" value="98765-4"></div>
+            <div class="fg"><label class="fl">NIT empresa</label><input class="fi" value="0614-220180-001-5"></div>
+            <div class="fg"><label class="fl">Ambiente</label><select class="fs"><option selected>Producción</option><option>Pruebas</option></select></div>
+            <button class="btn btn-ghost btn-sm" onclick="testFEL('SV')">🧪 Test MH</button>
+          </div>
+          <!-- CR Hacienda -->
+          <div class="cfg-section" style="margin-bottom:0">
+            <div class="cfg-title">🇨🇷 Costa Rica · Hacienda FE <span class="chip chip-green">✅ Activo</span></div>
+            <div class="fg"><label class="fl">Cédula jurídica</label><input class="fi" value="3-101-789456"></div>
+            <div class="fg"><label class="fl">Nombre contribuyente</label><input class="fi" value="AJÚA Costa Rica S.A."></div>
+            <div class="fg"><label class="fl">Token ATV</label><input class="fi" value="****-****-****-9f2a" type="password"></div>
+            <button class="btn btn-ghost btn-sm" onclick="testFEL('CR')">🧪 Test Hacienda</button>
+          </div>
+        </div>
+        <div style="margin-top:16px">
+          <button class="btn btn-primary" onclick="showToast('💾 Configuración FEL guardada en todos los países','ok')">💾 Guardar toda la configuración FEL</button>
+        </div>
+      </div>
+
+      <!-- TAB: CONFIGURACIÓN -->
+      <div class="tab-pane" id="pane-cfg">
+        <div class="cfg-section">
+          <div class="cfg-title">🏢 Datos generales de la empresa</div>
+          <div class="cfg-grid">
+            <div class="fg"><label class="fl">Nombre comercial</label><input class="fi" value="Agroindustria AJÚA"></div>
+            <div class="fg"><label class="fl">Razón social</label><input class="fi" value="Agroindustria AJÚA S.A."></div>
+            <div class="fg"><label class="fl">NIT / RUT principal</label><input class="fi" value="12345678-9"></div>
+            <div class="fg"><label class="fl">País principal</label><select class="fs"><option>🇬🇹 Guatemala</option><option>🇭🇳 Honduras</option></select></div>
+            <div class="fg"><label class="fl">Dirección</label><input class="fi" value="Zona 12, Ciudad de Guatemala"></div>
+            <div class="fg"><label class="fl">Teléfono</label><input class="fi" value="+502 2345-6789"></div>
+            <div class="fg"><label class="fl">Email de facturación</label><input class="fi" value="facturacion@ajua.gt"></div>
+            <div class="fg"><label class="fl">Perfil del sistema</label><select class="fs"><option selected>🏭 Empacador</option><option>🌾 Empacador + Agricultor</option><option>🧑‍🌾 Agricultor</option></select></div>
+          </div>
+        </div>
+        <div class="cfg-section">
+          <div class="cfg-title">🔔 Notificaciones y alertas</div>
+          <div class="toggle-wrap"><div><div class="tg-info">Alertas EDI en tiempo real</div><div class="tg-sub">Push cuando llega un 850 o falla un 810</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-wrap"><div><div class="tg-info">Alerta BPM incompleto</div><div class="tg-sub">Notificar si un módulo queda sin completar a las 20:00</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-wrap"><div><div class="tg-info">Recordatorio carnet manipulador</div><div class="tg-sub">30 días antes del vencimiento</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-wrap"><div><div class="tg-info">Alertas de temperatura en ruta</div><div class="tg-sub">Si el furgón supera los 6°C</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-wrap"><div><div class="tg-info">Resumen diario por email</div><div class="tg-sub">KPIs del día a las 18:00</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+        </div>
+        <div class="cfg-section">
+          <div class="cfg-title">🌐 Idioma y zona horaria</div>
+          <div class="cfg-grid">
+            <div class="fg"><label class="fl">Idioma</label><select class="fs"><option selected>Español (Guatemala)</option><option>English (US)</option></select></div>
+            <div class="fg"><label class="fl">Zona horaria</label><select class="fs"><option selected>America/Guatemala (UTC-6)</option><option>America/Costa_Rica (UTC-6)</option><option>America/Tegucigalpa (UTC-6)</option></select></div>
+            <div class="fg"><label class="fl">Formato de fecha</label><select class="fs"><option selected>DD/MM/YYYY</option><option>MM/DD/YYYY</option><option>YYYY-MM-DD</option></select></div>
+            <div class="fg"><label class="fl">Moneda principal</label><select class="fs"><option selected>GTQ — Quetzal</option><option>USD — Dólar</option></select></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="saveConfig()">💾 Guardar configuración</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Nueva empresa -->
+<div class="modal-bg" id="newEmpresaModal" onclick="if(event.target===this)closeModal('newEmpresaModal')">
+  <div class="modal-box">
+    <div class="modal-head"><span class="modal-title">🏢 Nueva empresa / tenant</span><button class="modal-close" onclick="closeModal('newEmpresaModal')">✕</button></div>
+    <div class="fg"><label class="fl">Nombre comercial</label><input class="fi" placeholder="Nombre de la empresa"></div>
+    <div class="fg2">
+      <div class="fg"><label class="fl">NIT / RTN / RUC</label><input class="fi" placeholder="Identificación fiscal"></div>
+      <div class="fg"><label class="fl">País principal</label><select class="fs"><option>🇬🇹 Guatemala</option><option>🇭🇳 Honduras</option><option>🇸🇻 El Salvador</option><option>🇨🇷 Costa Rica</option><option>🇳🇮 Nicaragua</option></select></div>
+    </div>
+    <div class="fg"><label class="fl">Perfil / tipo de empresa</label>
+      <select class="fs">
+        <option>🏭 Empacador puro</option>
+        <option>🌾 Empacador + Agricultor</option>
+        <option>🧑‍🌾 Solo Agricultor / Productor</option>
+        <option>🏪 Tienda / Supervisor (solo lectura)</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">Admin de la empresa (correo)</label><input class="fi" type="email" placeholder="admin@empresa.com"></div>
+    <div style="background:rgba(39,112,63,.07);border:1px solid rgba(39,112,63,.2);border-radius:var(--r2);padding:10px 14px;font-size:.79rem;color:var(--g4);font-weight:600;margin-top:4px">
+      ✅ Se crearán automáticamente los módulos, usuarios iniciales y configuración FEL según el país elegido.
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('newEmpresaModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="createEmpresa()">🚀 Crear empresa</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Nuevo usuario -->
+<div class="modal-bg" id="newUserModal" onclick="if(event.target===this)closeModal('newUserModal')">
+  <div class="modal-box" style="max-width:460px">
+    <div class="modal-head"><span class="modal-title">👤 Nuevo usuario</span><button class="modal-close" onclick="closeModal('newUserModal')">✕</button></div>
+    <div class="fg2">
+      <div class="fg"><label class="fl">Nombre</label><input class="fi" placeholder="Nombre completo"></div>
+      <div class="fg"><label class="fl">Correo</label><input class="fi" type="email" placeholder="correo@empresa.com"></div>
+    </div>
+    <div class="fg"><label class="fl">Rol</label>
+      <select class="fs">
+        <option>👑 Admin Empresa</option>
+        <option>🔬 Supervisor BPM</option>
+        <option>📦 Operador Logística</option>
+        <option>💰 Contador / Finanzas</option>
+        <option>👁 Auditor (solo lectura)</option>
+        <option>🌾 Vista Campo / Piloto</option>
+        <option>🏪 Vista Tienda</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">Empresa</label>
+      <select class="fs">
+        <option>Agroindustria AJÚA</option>
+        <option>Verduras del Campo S.A.</option>
+        <option>Orgánicos del Norte</option>
+      </select>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('newUserModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="createUser()">✅ Crear y enviar invitación</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="build-stamp">AGRICHAIN PRO v3.0 · Multi-Empresa · Build 2026-03-01 21:41 UTC</div>
+
+<script>
+'use strict';
+
+// ── DATA ──────────────────────────────────────────────────────
+const USERS = [
+  {name:'Ricardo Sagastume',email:'rsagastume@ajua.gt',  rol:'👑 Admin Empresa',   emp:'AJÚA',            acc:'Hace 2 min',status:'activo'},
+  {name:'María López',      email:'mlopez@ajua.gt',       rol:'🔬 Supervisor BPM',  emp:'AJÚA',            acc:'Hace 1 hora',status:'activo'},
+  {name:'Ana Morales',      email:'amorales@ajua.gt',     rol:'📦 Op. Logística',   emp:'AJÚA',            acc:'Hoy 08:45',  status:'activo'},
+  {name:'Carlos Herrera',   email:'cherrera@verduras.sv', rol:'👑 Admin Empresa',   emp:'Verduras del C.', acc:'Ayer',       status:'activo'},
+  {name:'Auditor Walmart',  email:'auditor@walmart.gt',   rol:'👁 Auditor',         emp:'AJÚA (externo)',  acc:'Hace 3 días',status:'activo'},
+  {name:'Marta Godínez',    email:'mgodinez@ajua.gt',     rol:'💰 Contadora',       emp:'AJÚA',            acc:'Ayer 14:20', status:'activo'},
+  {name:'Piloto App',       email:'piloto1@ajua.gt',      rol:'🌾 Campo / Piloto',  emp:'AJÚA',            acc:'Hace 20 min',status:'activo'},
+];
+
+const ROL_CHIP = {
+  '👑 Admin Empresa':'chip-teal',
+  '🔬 Supervisor BPM':'chip-green',
+  '📦 Op. Logística':'chip-blue',
+  '👁 Auditor':'chip-gray',
+  '💰 Contadora':'chip-gold',
+  '🌾 Campo / Piloto':'chip-lilac',
+};
+
+// ── RENDER ────────────────────────────────────────────────────
+function renderUsers(){
+  document.getElementById('userTbody').innerHTML = USERS.map(u=>`
+  <tr>
+    <td class="td-bold">${u.name}</td>
+    <td class="td-mono" style="font-size:.73rem">${u.email}</td>
+    <td><span class="chip ${ROL_CHIP[u.rol]||'chip-gray'}" style="font-size:.67rem">${u.rol}</span></td>
+    <td class="td-muted">${u.emp}</td>
+    <td class="td-muted">${u.acc}</td>
+    <td><span class="chip chip-green">✅ Activo</span></td>
+    <td>
+      <div class="row-acts">
+        <button class="ra-btn" title="Editar" onclick="showToast('✏️ Editando usuario…','info')">✏️</button>
+        <button class="ra-btn" title="Restablecer contraseña" onclick="showToast('📧 Email de restablecimiento enviado','ok')">🔑</button>
+        <button class="ra-btn ra-del" title="Desactivar" onclick="showToast('⚠️ Usuario desactivado','warn')">🚫</button>
+      </div>
+    </td>
+  </tr>`).join('');
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────
+function testConn(sys){
+  showToast('🔄 Probando conexión con '+sys+'…','info');
+  setTimeout(()=>showToast('✅ '+sys+' · Conexión exitosa · 142ms','ok'),1800);
+}
+function testFEL(pais){
+  const names={GT:'SAT Guatemala',HN:'SAR Honduras',SV:'MH El Salvador',CR:'Hacienda CR'};
+  if(pais==='HN'){showToast('⚠️ SAR Honduras sin conexión — verificar credenciales','warn');return;}
+  showToast('🔄 Probando FEL '+names[pais]+'…','info');
+  setTimeout(()=>showToast('✅ FEL '+names[pais]+' · Test exitoso · Serie OK','ok'),1600);
+}
+function copyKey(k){
+  navigator.clipboard?.writeText(k).catch(()=>{});
+  showToast('📋 Key copiada al portapapeles','ok');
+}
+function regenKey(){
+  showToast('⚠️ Regenerar invalidará la key actual. Confirmar en producción.','warn');
+}
+function switchCompany(n){showToast('🏢 Cambiando a: '+n,'info');setTimeout(()=>showToast('✅ Empresa activa: '+n,'ok'),1400);}
+function createEmpresa(){closeModal('newEmpresaModal');showToast('✅ Empresa creada · Módulos y FEL configurados automáticamente','ok');}
+function createUser(){closeModal('newUserModal');showToast('✅ Usuario creado · Invitación enviada por email','ok');}
+function saveConfig(){showToast('💾 Configuración guardada · '+new Date().toLocaleTimeString('es-GT'),'ok');}
+
+// ── DATE ──────────────────────────────────────────────────────
+(function(){
+  const now=new Date();
+  document.getElementById('phDate').textContent=
+    now.toLocaleDateString('es-GT',{weekday:'long',year:'numeric',month:'long',day:'numeric'}).replace(/^\w/,x=>x.toUpperCase())
+    +' · Build 2026-03-01 21:41 UTC';
+})();
+
+// ── TABS ──────────────────────────────────────────────────────
+function openTab(id,btnId){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pane-'+id).classList.add('on');
+  document.getElementById('tb-'+id).classList.add('on');
+}
+
+// ── MODAL / TOAST ─────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+let _tt;
+function showToast(msg,type='ok'){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='toast '+type+' show';
+  clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('show'),3400);
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+renderUsers();
+</script>
+</body>
+</html>

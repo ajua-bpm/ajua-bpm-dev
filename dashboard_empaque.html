@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AgriChain Pro — Dashboard Empacador</title>
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║  AGRICHAIN PRO v3.0                                          ║
+║  Dashboard: EMPACADOR (perfil 1/4)                           ║
+║  Build:     2026-03-01  20:03 UTC                            ║
+║  Módulos:   logistica · bpm · finanzas · rrhh · empresa      ║
+║  Siguiente: dashboard_empaque_agricultor.html                ║
+╚══════════════════════════════════════════════════════════════╝
+-->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root{
+  --g9:#04100A;--g8:#081E10;--g6:#154025;--g5:#1C5431;
+  --g4:#27703F;--g3:#348C52;--g2:#52AA6E;--g1:#84CC96;--g0:#C0EAC8;
+  --p9:#F6F2E2;--p8:#EDE9D6;--p7:#E3DFCA;--p6:#D4CFBA;
+  --gold:#F0B429;--gold2:#FAD163;--gold3:#D49420;
+  --ok:#16A34A;--warn:#D97706;--err:#DC2626;
+  --info:#2563EB;--teal:#0D9488;--lilac:#7C3AED;
+  --bg:#EDE9D6;--card:#FAFAF4;--card2:#F3F0E2;
+  --bdr:#DDD9C8;--bdr2:#C8C4B0;
+  --sb:#081E10;--sb2:rgba(255,255,255,.055);
+  --sb3:rgba(255,255,255,.08);--sba:rgba(84,204,150,.12);
+  --t1:#18201A;--t2:#363D32;--t3:#64706A;--t4:#96A09A;
+  --ti1:rgba(255,255,255,.92);--ti2:rgba(255,255,255,.55);--ti3:rgba(255,255,255,.26);
+  --fd:'Outfit',system-ui,sans-serif;
+  --fb:'Plus Jakarta Sans',system-ui,sans-serif;
+  --fm:'JetBrains Mono',monospace;
+  --r1:6px;--r2:10px;--r3:14px;--r4:20px;--r5:28px;
+  --s1:0 1px 3px rgba(4,16,10,.08),0 1px 2px rgba(4,16,10,.05);
+  --s2:0 4px 16px rgba(4,16,10,.10),0 2px 4px rgba(4,16,10,.05);
+  --s3:0 10px 36px rgba(4,16,10,.13);--s4:0 20px 60px rgba(4,16,10,.18);
+  --glow:0 0 0 3px rgba(82,170,110,.22);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;}
+body{font-family:var(--fb);background:var(--bg);color:var(--t1);line-height:1.55;-webkit-font-smoothing:antialiased;}
+a{text-decoration:none;color:inherit;}
+button,input,select,textarea{font-family:var(--fb);}
+::selection{background:rgba(82,170,110,.22);}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--p8);}
+::-webkit-scrollbar-thumb{background:rgba(39,112,63,.3);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--g3);}
+
+/* ── SHELL ── */
+.shell{display:flex;height:100vh;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:258px;flex-shrink:0;background:var(--sb);display:flex;flex-direction:column;border-right:1px solid var(--sb3);position:relative;overflow:hidden;}
+.sidebar::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 28% 18%,rgba(52,140,82,.08) 0%,transparent 55%),radial-gradient(ellipse at 78% 82%,rgba(240,180,41,.04) 0%,transparent 50%);}
+.sb-head{padding:18px 14px 14px;border-bottom:1px solid var(--sb3);flex-shrink:0;}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.brand-logo{width:38px;height:38px;border-radius:11px;flex-shrink:0;background:linear-gradient(135deg,var(--g4),var(--g1));display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 2px 14px rgba(52,140,82,.38);}
+.brand-name{font-family:var(--fd);font-size:.97rem;font-weight:800;color:var(--ti1);letter-spacing:-.01em;line-height:1.15;}
+.brand-ver{font-size:.56rem;color:var(--g1);font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.7;}
+.tenant-pill{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.045);border:1px solid var(--sb3);border-radius:var(--r3);padding:8px 10px;cursor:pointer;transition:all .13s;}
+.tenant-pill:hover{background:rgba(255,255,255,.09);border-color:rgba(84,204,150,.25);}
+.tp-ico{width:29px;height:29px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.tp-name{font-size:.77rem;font-weight:700;color:var(--ti1);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tp-type{font-size:.6rem;color:var(--ti3);}
+.sb-nav{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:1px;}
+.sb-nav::-webkit-scrollbar{width:3px;}
+.nav-section{font-size:.57rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--ti3);padding:10px 8px 4px;margin-top:4px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:var(--r3);cursor:pointer;transition:all .13s;text-decoration:none;border:1px solid transparent;}
+.nav-item:hover{background:var(--sb2);}
+.nav-item.active{background:var(--sba);border-color:rgba(84,204,150,.22);}
+.ni-ico{width:30px;height:30px;border-radius:var(--r2);background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:background .13s;}
+.nav-item.active .ni-ico{background:rgba(84,204,150,.2);}
+.nav-item:hover .ni-ico{background:rgba(255,255,255,.1);}
+.ni-text{flex:1;min-width:0;}
+.ni-label{font-size:.8rem;font-weight:600;color:var(--ti2);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .13s;}
+.ni-sub{font-size:.6rem;color:var(--ti3);display:block;}
+.nav-item:hover .ni-label{color:var(--ti1);}
+.nav-item.active .ni-label{color:var(--g0);font-weight:700;}
+.nav-badge{padding:2px 7px;border-radius:100px;font-size:.58rem;font-weight:800;flex-shrink:0;}
+.nb-red{background:var(--err);color:#fff;}
+.nb-gold{background:var(--gold);color:var(--g9);}
+.sb-foot{padding:12px 10px;border-top:1px solid var(--sb3);flex-shrink:0;}
+.sb-user{display:flex;align-items:center;gap:9px;padding:8px;border-radius:var(--r3);cursor:pointer;transition:background .13s;}
+.sb-user:hover{background:var(--sb2);}
+.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;}
+.u-name{font-size:.8rem;font-weight:700;color:var(--ti1);}
+.u-role{font-size:.61rem;color:var(--ti3);}
+
+/* ── MAIN ── */
+.main-wrap{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:62px;background:var(--card);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 28px;gap:14px;flex-shrink:0;box-shadow:var(--s1);}
+.breadcrumb{display:flex;align-items:center;gap:6px;flex:1;}
+.bc-cur{font-size:.8rem;font-weight:700;color:var(--t1);}
+.bc-sep{font-size:.75rem;color:var(--t4);}
+.bc-link{font-size:.8rem;color:var(--t3);}
+.tb-right{display:flex;align-items:center;gap:9px;}
+.divider{width:1px;height:22px;background:var(--bdr);}
+.icon-btn{width:34px;height:34px;border-radius:var(--r2);border:1px solid var(--bdr);background:transparent;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:all .13s;color:var(--t2);position:relative;}
+.icon-btn:hover{background:var(--card2);border-color:var(--bdr2);}
+.icon-btn .dot{position:absolute;top:6px;right:6px;width:5px;height:5px;background:var(--err);border-radius:50%;border:1.5px solid var(--card);}
+.topbar-user{display:flex;align-items:center;gap:8px;padding:4px 10px;border-radius:var(--r2);cursor:pointer;transition:background .13s;}
+.topbar-user:hover{background:var(--card2);}
+.tu-name{font-size:.8rem;font-weight:700;color:var(--t1);}
+.tu-role{font-size:.63rem;color:var(--t3);}
+.page{flex:1;overflow-y:auto;padding:28px 28px 56px;}
+
+/* ── PAGE HEADER ── */
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
+.page-title{font-family:var(--fd);font-size:1.8rem;font-weight:900;color:var(--g8);line-height:1.1;letter-spacing:-.02em;margin-bottom:5px;}
+.page-subtitle{font-size:.82rem;color:var(--t3);}
+.page-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--r3);border:none;cursor:pointer;font-family:var(--fb);font-size:.83rem;font-weight:700;transition:all .13s;white-space:nowrap;line-height:1;}
+.btn-primary{background:linear-gradient(135deg,var(--g4),var(--g2));color:#fff;box-shadow:0 3px 12px rgba(39,112,63,.3);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(39,112,63,.4);}
+.btn-ghost{background:var(--card2);color:var(--t2);border:1px solid var(--bdr);}
+.btn-ghost:hover{background:var(--p7);}
+.btn-dark{background:rgba(255,255,255,.08);color:var(--ti1);border:1px solid var(--sb3);}
+.btn-dark:hover{background:rgba(255,255,255,.15);}
+.btn-sm{padding:6px 14px;font-size:.77rem;border-radius:var(--r2);}
+.btn-xs{padding:4px 9px;font-size:.69rem;border-radius:var(--r1);}
+
+/* ── CHIPS ── */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:100px;font-size:.71rem;font-weight:700;white-space:nowrap;line-height:1.5;}
+.chip-green{background:rgba(22,163,74,.1);color:#166534;border:1px solid rgba(22,163,74,.22);}
+.chip-gold{background:rgba(217,119,6,.1);color:#92400E;border:1px solid rgba(217,119,6,.22);}
+.chip-red{background:rgba(220,38,38,.1);color:#991B1B;border:1px solid rgba(220,38,38,.22);}
+.chip-blue{background:rgba(37,99,235,.1);color:#1E3A8A;border:1px solid rgba(37,99,235,.22);}
+.chip-teal{background:rgba(13,148,136,.1);color:#134E4A;border:1px solid rgba(13,148,136,.22);}
+.chip-gray{background:var(--card2);color:var(--t3);border:1px solid var(--bdr);}
+
+/* ── EDI BAR ── */
+.edi-bar{background:var(--g9);border-radius:var(--r4);padding:11px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:22px;}
+.edi-label{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ti3);flex-shrink:0;}
+.edi-node{display:flex;align-items:center;gap:7px;padding:5px 11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:var(--r2);cursor:default;transition:all .13s;}
+.edi-node:hover{background:rgba(255,255,255,.09);}
+.edi-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.edi-dot.live{background:var(--g1);animation:pulse 2.4s infinite;}
+.edi-dot.down{background:var(--err);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+.edi-name{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.78);}
+.edi-sub{font-family:var(--fm);font-size:.57rem;color:var(--ti3);}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;}
+@media(max-width:1200px){.kpi-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:720px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
+.kpi-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r4);padding:18px 16px 14px;position:relative;overflow:hidden;transition:all .2s;cursor:default;}
+.kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;transition:height .2s;}
+.kpi-card:hover{box-shadow:var(--s2);transform:translateY(-2px);}
+.kpi-card:hover::after{height:4px;}
+.kc-green::after{background:linear-gradient(90deg,var(--g3),var(--g1));}
+.kc-gold::after{background:linear-gradient(90deg,var(--gold3),var(--gold2));}
+.kc-blue::after{background:linear-gradient(90deg,var(--info),#60A5FA);}
+.kc-teal::after{background:linear-gradient(90deg,var(--teal),#2DD4BF);}
+.kc-red::after{background:linear-gradient(90deg,var(--err),#F87171);}
+.kpi-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.kpi-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.ki-green{background:rgba(22,163,74,.1);}
+.ki-gold{background:rgba(217,119,6,.1);}
+.ki-blue{background:rgba(37,99,235,.1);}
+.ki-teal{background:rgba(13,148,136,.1);}
+.ki-red{background:rgba(220,38,38,.1);}
+.kpi-trend{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:100px;font-size:.65rem;font-weight:700;}
+.trend-up{background:rgba(22,163,74,.1);color:#166534;}
+.trend-dn{background:rgba(220,38,38,.1);color:#991B1B;}
+.trend-flat{background:rgba(217,119,6,.1);color:#92400E;}
+.kpi-value{font-family:var(--fd);font-size:1.85rem;font-weight:900;color:var(--g8);line-height:1;margin-bottom:4px;letter-spacing:-.02em;}
+.kpi-label{font-size:.73rem;font-weight:600;color:var(--t3);}
+.kpi-detail{font-size:.65rem;color:var(--t4);margin-top:5px;}
+
+/* ── CALENDAR STRIP ── */
+.cal-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:22px;}
+.cal-strip::-webkit-scrollbar{height:3px;}
+.cal-day{min-width:60px;padding:8px 5px;border-radius:var(--r3);border:1px solid var(--bdr);background:var(--card);text-align:center;cursor:pointer;flex-shrink:0;transition:all .13s;position:relative;}
+.cal-day:hover{border-color:var(--g3);}
+.cal-day.today{border-color:var(--g3);background:rgba(39,112,63,.06);}
+.cal-day.has-orders::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--g3);border-radius:50%;}
+.cal-dow{font-size:.56rem;font-weight:800;color:var(--t4);text-transform:uppercase;letter-spacing:.06em;}
+.cal-num{font-family:var(--fd);font-size:1.1rem;font-weight:900;color:var(--t1);}
+.cal-cnt{font-size:.6rem;color:var(--g3);font-weight:700;}
+
+/* ── PANELS ── */
+.panel{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r4);padding:20px;}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;}
+.panel-title{font-family:var(--fd);font-size:1rem;font-weight:800;color:var(--g8);}
+.panel-sub{font-size:.71rem;color:var(--t3);margin-top:2px;}
+.panel-more{font-size:.76rem;color:var(--g3);font-weight:700;cursor:pointer;transition:color .13s;white-space:nowrap;text-decoration:none;}
+.panel-more:hover{color:var(--g4);}
+
+/* ── BAR CHART ── */
+.bar-chart{height:170px;display:flex;align-items:flex-end;gap:5px;padding-bottom:26px;}
+.bar-group{flex:1;display:flex;gap:3px;align-items:flex-end;height:100%;}
+.bar{flex:1;border-radius:4px 4px 0 0;cursor:pointer;transition:opacity .13s;position:relative;}
+.bar:hover{opacity:.78;}
+.bar-a{background:linear-gradient(180deg,var(--g1),var(--g4));}
+.bar-b{background:linear-gradient(180deg,rgba(240,180,41,.55),rgba(240,180,41,.18));}
+.bar-lbl{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:.57rem;color:var(--t4);white-space:nowrap;}
+.chart-legend{display:flex;gap:14px;margin-top:8px;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--t3);}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+
+/* ── RING CHART ── */
+.ring-wrap{position:relative;display:inline-flex;}
+.ring-wrap svg{transform:rotate(-90deg);}
+.ring-track{fill:none;stroke:var(--p7);}
+.ring-fill{fill:none;stroke-linecap:round;transition:stroke-dashoffset 1.4s cubic-bezier(0,0,.2,1);}
+.ring-fill-green{stroke:var(--g1);filter:drop-shadow(0 0 5px rgba(132,204,150,.4));}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ring-value{font-family:var(--fd);font-size:1.5rem;font-weight:900;color:var(--g8);line-height:1;}
+.ring-label{font-size:.56rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+.bpm-breakdown{display:flex;flex-direction:column;gap:7px;margin-top:14px;width:100%;}
+.bb-row{display:flex;align-items:center;gap:8px;}
+.bb-name{font-size:.7rem;color:var(--t3);width:78px;flex-shrink:0;}
+.bb-bar{flex:1;height:5px;background:var(--p7);border-radius:3px;overflow:hidden;}
+.bb-fill{height:100%;border-radius:3px;}
+.bb-fill-green{background:linear-gradient(90deg,var(--g3),var(--g1));}
+.bb-fill-warn{background:linear-gradient(90deg,var(--warn),var(--gold2));}
+.bb-pct{font-size:.7rem;font-weight:700;color:var(--t2);width:30px;text-align:right;flex-shrink:0;}
+
+/* ── ALERT ITEMS ── */
+.alert-item{display:flex;gap:11px;align-items:flex-start;padding:11px;border-radius:var(--r3);margin-bottom:7px;cursor:pointer;border:1px solid;transition:opacity .13s;}
+.alert-item:last-child{margin-bottom:0;}
+.alert-item:hover{opacity:.88;}
+.ai-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.ai-title{font-size:.8rem;font-weight:700;color:var(--t1);}
+.ai-desc{font-size:.71rem;color:var(--t3);margin-top:2px;}
+.ai-time{font-size:.65rem;color:var(--t4);margin-top:3px;}
+.alert-warn{background:rgba(217,119,6,.07);border-color:rgba(217,119,6,.2);}
+.alert-warn .ai-icon{background:rgba(217,119,6,.12);}
+.alert-err{background:rgba(220,38,38,.07);border-color:rgba(220,38,38,.2);}
+.alert-err .ai-icon{background:rgba(220,38,38,.1);}
+.alert-info{background:rgba(37,99,235,.07);border-color:rgba(37,99,235,.2);}
+.alert-info .ai-icon{background:rgba(37,99,235,.1);}
+.alert-ok{background:rgba(22,163,74,.07);border-color:rgba(22,163,74,.2);}
+.alert-ok .ai-icon{background:rgba(22,163,74,.1);}
+
+/* ── STAT ROW ── */
+.stat-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--p8);cursor:pointer;transition:background .13s;}
+.stat-row:last-child{border-bottom:none;}
+.stat-row:hover{background:var(--p9);margin:0 -4px;padding:9px 4px;border-radius:var(--r2);}
+.sr-icon{width:32px;height:32px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.sr-title{font-size:.8rem;font-weight:700;color:var(--t1);}
+.sr-sub{font-size:.68rem;color:var(--t3);}
+
+/* ── MODULE CARDS ── */
+.mod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media(max-width:1100px){.mod-grid{grid-template-columns:repeat(2,1fr);}}
+.mod-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r4);padding:18px 16px;display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;text-align:center;transition:all .2s;position:relative;overflow:hidden;text-decoration:none;}
+.mod-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2.5px;}
+.mod-card:hover{border-color:var(--g3);transform:translateY(-3px);box-shadow:var(--s2);}
+.mc-icon{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;transition:transform .2s;}
+.mod-card:hover .mc-icon{transform:scale(1.1);}
+.mc-name{font-family:var(--fd);font-size:.86rem;font-weight:800;color:var(--t1);}
+.mc-sub{font-size:.7rem;color:var(--t3);}
+.mc-val{font-family:var(--fd);font-size:1.05rem;font-weight:900;}
+.mod-bpm .mc-icon{background:rgba(22,163,74,.1);}.mod-bpm::before{background:linear-gradient(90deg,var(--g3),var(--g1));}
+.mod-log .mc-icon{background:rgba(37,99,235,.1);}.mod-log::before{background:linear-gradient(90deg,var(--info),#60A5FA);}
+.mod-fin .mc-icon{background:rgba(13,148,136,.1);}.mod-fin::before{background:linear-gradient(90deg,var(--teal),#2DD4BF);}
+.mod-rrhh .mc-icon{background:rgba(220,38,38,.1);}.mod-rrhh::before{background:linear-gradient(90deg,var(--err),#F87171);}
+.mod-emp .mc-icon{background:rgba(124,58,237,.1);}.mod-emp::before{background:linear-gradient(90deg,#7C3AED,#A78BFA);}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(4,16,10,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;opacity:0;pointer-events:none;transition:opacity .22s;}
+.modal-bg.open{opacity:1;pointer-events:all;}
+.modal-box{background:var(--card);border-radius:var(--r5);padding:28px;width:100%;max-width:500px;box-shadow:var(--s4);transform:translateY(24px) scale(.97);transition:transform .22s;border:1px solid var(--bdr);}
+.modal-bg.open .modal-box{transform:translateY(0) scale(1);}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
+.modal-title{font-family:var(--fd);font-size:1.2rem;font-weight:900;color:var(--g8);}
+.modal-close{width:32px;height:32px;border-radius:var(--r2);border:1px solid var(--bdr);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .13s;color:var(--t3);}
+.modal-close:hover{background:var(--card2);color:var(--t1);}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;padding-top:18px;border-top:1px solid var(--bdr);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--g9);color:var(--ti1);padding:12px 18px;border-radius:var(--r3);display:flex;align-items:center;gap:10px;font-size:.82rem;font-weight:600;box-shadow:var(--s3);transform:translateX(120px);opacity:0;transition:all .28s cubic-bezier(.4,0,.2,1);z-index:2000;max-width:380px;pointer-events:none;border-left:3px solid;}
+.toast.show{transform:translateX(0);opacity:1;}
+.toast.ok{border-left-color:var(--g1);}
+.toast.warn{border-left-color:var(--gold2);}
+.toast.error{border-left-color:#F87171;}
+.toast.info{border-left-color:#60A5FA;}
+
+/* ── LAYOUT HELPERS ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.two-col-lg{display:grid;grid-template-columns:2fr 1fr;gap:18px;}
+@media(max-width:1000px){.two-col-lg{grid-template-columns:1fr;}}
+.mb-sm{margin-bottom:14px;}.mb-md{margin-bottom:22px;}.mb-lg{margin-bottom:28px;}
+.flex{display:flex;}.flex-col{flex-direction:column;}.items-center{align-items:center;}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.anim{animation:fadeUp .38s cubic-bezier(0,0,.2,1) forwards;}
+.d1{animation-delay:.07s;opacity:0;}.d2{animation-delay:.14s;opacity:0;}
+.d3{animation-delay:.21s;opacity:0;}.d4{animation-delay:.28s;opacity:0;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .shell{flex-direction:column;height:auto;min-height:100vh;}
+  .sidebar{display:none;}
+  .main-wrap{height:auto;}
+  .page{padding:16px 16px 44px;}
+  .topbar{padding:0 16px;}
+  .page-title{font-size:1.45rem;}
+  .hide-m{display:none!important;}
+  .two-col,.two-col-lg,.mod-grid{grid-template-columns:1fr!important;}
+}
+@media(min-width:769px){.show-m{display:none!important;}}
+
+/* ── BUILD STAMP ── */
+.build-stamp{position:fixed;bottom:10px;left:12px;font-family:var(--fm);font-size:.58rem;color:rgba(0,0,0,.3);background:rgba(255,255,255,.68);padding:3px 9px;border-radius:4px;z-index:9999;pointer-events:none;backdrop-filter:blur(4px);}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ═══════════════ SIDEBAR ═══════════════ -->
+  <aside class="sidebar">
+    <div class="sb-head">
+      <div class="brand">
+        <div class="brand-logo">🏭</div>
+        <div>
+          <div class="brand-name">AGRICHAIN PRO</div>
+          <div class="brand-ver">Empacador · v3.0 · 2026</div>
+        </div>
+      </div>
+      <div class="tenant-pill" onclick="openModal('tenantModal')">
+        <div class="tp-ico" style="background:linear-gradient(135deg,var(--g4),var(--g1))">🥦</div>
+        <div style="flex:1;overflow:hidden">
+          <div class="tp-name">Agroindustria AJÚA</div>
+          <div class="tp-type">Empacador Premium · GT · HN</div>
+        </div>
+        <span style="color:var(--ti3);font-size:.75rem;flex-shrink:0">⌄</span>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <span class="nav-section">Principal</span>
+      <a href="dashboard_empaque.html" class="nav-item active">
+        <div class="ni-ico">📊</div>
+        <div class="ni-text"><span class="ni-label">Dashboard</span><span class="ni-sub">Empacador</span></div>
+      </a>
+
+      <span class="nav-section">Operaciones</span>
+      <a href="logistica.html" class="nav-item">
+        <div class="ni-ico">📦</div>
+        <div class="ni-text"><span class="ni-label">Pedidos & Logística</span><span class="ni-sub">EDI 850 · 856 · 810</span></div>
+        <span class="nav-badge nb-gold">7</span>
+      </a>
+      <a href="bpm.html" class="nav-item">
+        <div class="ni-ico">🔬</div>
+        <div class="ni-text"><span class="ni-label">Control BPM</span><span class="ni-sub">12 módulos · Semana 9</span></div>
+      </a>
+
+      <span class="nav-section">Finanzas</span>
+      <a href="finanzas.html" class="nav-item">
+        <div class="ni-ico">💰</div>
+        <div class="ni-text"><span class="ni-label">Facturación & FEL</span><span class="ni-sub">GT · HN · SV · CR · NI</span></div>
+        <span class="nav-badge nb-red">3</span>
+      </a>
+
+      <span class="nav-section">Administración</span>
+      <a href="rrhh.html" class="nav-item">
+        <div class="ni-ico">👥</div>
+        <div class="ni-text"><span class="ni-label">RRHH & Empleados</span><span class="ni-sub">Planillas · Asistencia</span></div>
+      </a>
+      <a href="empresa.html" class="nav-item">
+        <div class="ni-ico">⚙️</div>
+        <div class="ni-text"><span class="ni-label">Multi-Empresa & APIs</span><span class="ni-sub">SAP · Ediwin · FEL</span></div>
+      </a>
+
+      <!-- Switcher de perfil -->
+      <span class="nav-section">Cambiar perfil</span>
+      <a href="dashboard_empaque_agricultor.html" class="nav-item">
+        <div class="ni-ico">🌾</div>
+        <div class="ni-text"><span class="ni-label">Empacador + Agricultores</span></div>
+      </a>
+      <a href="dashboard_agricultor.html" class="nav-item">
+        <div class="ni-ico">🧑‍🌾</div>
+        <div class="ni-text"><span class="ni-label">Solo Agricultor</span></div>
+      </a>
+      <a href="dashboard_walmart.html" class="nav-item">
+        <div class="ni-ico">🏪</div>
+        <div class="ni-text"><span class="ni-label">Vista Tienda / Auditor</span></div>
+      </a>
+    </nav>
+
+    <div class="sb-foot">
+      <div class="sb-user">
+        <div class="avatar" style="background:linear-gradient(135deg,var(--gold3),var(--g2))">RS</div>
+        <div style="flex:1;overflow:hidden">
+          <div class="u-name">Ricardo Sagastume</div>
+          <div class="u-role">Admin Empresa · AJÚA</div>
+        </div>
+        <span style="color:var(--ti3);font-size:.75rem">⋮</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════ MAIN ═══════════════ -->
+  <div class="main-wrap">
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span class="bc-cur">Dashboard Empacador</span>
+      </div>
+      <div class="tb-right">
+        <div style="display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--bdr);border-radius:var(--r2);padding:6px 12px;font-size:.77rem;color:var(--t3);">
+          📅 <span id="dateStr">—</span>
+        </div>
+        <button class="icon-btn hide-m">🔍</button>
+        <button class="icon-btn" onclick="openModal('notiModal')">🔔<span class="dot"></span></button>
+        <div class="divider hide-m"></div>
+        <div class="topbar-user hide-m">
+          <div class="avatar" style="width:28px;height:28px;font-size:10px;background:linear-gradient(135deg,var(--gold3),var(--g2))">RS</div>
+          <div><div class="tu-name">Ricardo S.</div><div class="tu-role">Admin · Empacador</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page">
+
+      <!-- Header -->
+      <div class="page-header anim">
+        <div>
+          <h1 class="page-title" id="greeting">Buenos días 👋</h1>
+          <p class="page-subtitle" id="fullDate">—</p>
+        </div>
+        <div class="page-actions">
+          <!-- Profile badge -->
+          <span class="chip chip-teal" style="font-size:.78rem;padding:5px 13px">🏭 Perfil: Empacador</span>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('📥 Generando reporte…','info')">📥 Exportar</button>
+          <button class="btn btn-primary btn-sm" onclick="window.location='logistica.html'">＋ Nueva orden</button>
+        </div>
+      </div>
+
+      <!-- EDI Bar -->
+      <div class="edi-bar anim d1">
+        <span class="edi-label">EDI Live:</span>
+        <div class="edi-node"><div class="edi-dot live"></div><div><div class="edi-name">Walmart EDI</div><div class="edi-sub">850·855·856·810·997</div></div></div>
+        <div class="edi-node"><div class="edi-dot live"></div><div><div class="edi-name">SAP S/4HANA</div><div class="edi-sub">REST · IDoc</div></div></div>
+        <div class="edi-node"><div class="edi-dot live"></div><div><div class="edi-name">SAT FEL · GT</div><div class="edi-sub">Certificado OK</div></div></div>
+        <div class="edi-node"><div class="edi-dot down"></div><div><div class="edi-name">SAR Honduras</div><div class="edi-sub">Sin conexión</div></div></div>
+        <div class="edi-node"><div class="edi-dot live"></div><div><div class="edi-name">Hacienda CR</div><div class="edi-sub">FEL activo</div></div></div>
+        <div class="edi-node" style="margin-left:auto">
+          <div class="edi-dot live"></div>
+          <div><div class="edi-name">Sync</div><div class="edi-sub" id="syncTime">Hace 3 min</div></div>
+        </div>
+        <button class="btn btn-dark btn-xs" onclick="syncAll()">🔄 Sync</button>
+      </div>
+
+      <!-- KPIs — enfocados en operaciones de empaque -->
+      <div class="kpi-grid anim d1">
+        <div class="kpi-card kc-gold">
+          <div class="kpi-top"><div class="kpi-icon ki-gold">⏳</div><span class="kpi-trend trend-flat">3 urgentes</span></div>
+          <div class="kpi-value">7</div>
+          <div class="kpi-label">Órdenes pendientes</div>
+          <div class="kpi-detail">OC-0847 vence HOY · 06:00</div>
+        </div>
+        <div class="kpi-card kc-green">
+          <div class="kpi-top"><div class="kpi-icon ki-green">📦</div><span class="kpi-trend trend-up">↑ 18%</span></div>
+          <div class="kpi-value">24</div>
+          <div class="kpi-label">Entregas hoy</div>
+          <div class="kpi-detail">22 confirmadas · 2 en ruta</div>
+        </div>
+        <div class="kpi-card kc-green">
+          <div class="kpi-top"><div class="kpi-icon ki-green">✅</div><span class="kpi-trend trend-up">↑ 5%</span></div>
+          <div class="kpi-value">85%</div>
+          <div class="kpi-label">BPM Compliance</div>
+          <div class="kpi-detail">2 módulos incompletos</div>
+        </div>
+        <div class="kpi-card kc-teal">
+          <div class="kpi-top"><div class="kpi-icon ki-teal">💰</div><span class="kpi-trend trend-up">↑ 12%</span></div>
+          <div class="kpi-value">Q84K</div>
+          <div class="kpi-label">Facturación mes</div>
+          <div class="kpi-detail">14 FEL emitidas · 3 pend.</div>
+        </div>
+        <div class="kpi-card kc-blue">
+          <div class="kpi-top"><div class="kpi-icon ki-blue">👷</div><span class="kpi-trend trend-up">+2</span></div>
+          <div class="kpi-value">32</div>
+          <div class="kpi-label">Empleados activos</div>
+          <div class="kpi-detail">3 turnos · 2 ausencias hoy</div>
+        </div>
+      </div>
+
+      <!-- Calendar -->
+      <div class="cal-strip anim d2" id="calStrip"></div>
+
+      <!-- Charts -->
+      <div class="two-col-lg mb-md anim d2">
+        <div class="panel">
+          <div class="panel-head">
+            <div><div class="panel-title">📈 Entregas semanales</div><div class="panel-sub">Semana 9 · 2,347 cajas</div></div>
+            <a href="logistica.html" class="panel-more">Ver detalle →</a>
+          </div>
+          <div class="bar-chart" id="barChart"></div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--g3)"></div>Entregadas</div>
+            <div class="legend-item"><div class="legend-dot" style="background:rgba(240,180,41,.5)"></div>Pedidas</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <div><div class="panel-title">🎯 BPM Compliance</div><div class="panel-sub">Semana 9 · 85%</div></div>
+            <a href="bpm.html" class="panel-more">Ver BPM →</a>
+          </div>
+          <div class="flex flex-col items-center" style="min-height:220px">
+            <div class="ring-wrap" style="width:110px;height:110px">
+              <svg width="110" height="110" viewBox="0 0 110 110">
+                <circle class="ring-track" cx="55" cy="55" r="44" stroke-width="10"/>
+                <circle class="ring-fill ring-fill-green" cx="55" cy="55" r="44" stroke-width="10"
+                  stroke-dasharray="276.5" stroke-dashoffset="41.5"/>
+              </svg>
+              <div class="ring-center"><span class="ring-value">85%</span><span class="ring-label">BPM</span></div>
+            </div>
+            <div class="bpm-breakdown">
+              <div class="bb-row"><span class="bb-name">Limpieza</span><div class="bb-bar"><div class="bb-fill bb-fill-green" style="width:92%"></div></div><span class="bb-pct">92%</span></div>
+              <div class="bb-row"><span class="bb-name">Despacho</span><div class="bb-bar"><div class="bb-fill bb-fill-green" style="width:88%"></div></div><span class="bb-pct">88%</span></div>
+              <div class="bb-row"><span class="bb-name">Roedores</span><div class="bb-bar"><div class="bb-fill bb-fill-warn" style="width:75%"></div></div><span class="bb-pct">75%</span></div>
+              <div class="bb-row"><span class="bb-name">Temperatura</span><div class="bb-bar"><div class="bb-fill bb-fill-green" style="width:80%"></div></div><span class="bb-pct">80%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts + Orders -->
+      <div class="two-col mb-md anim d3">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">⚡ Alertas del día</div>
+            <span class="panel-more" onclick="openModal('notiModal')">Ver todas</span>
+          </div>
+          <div class="alert-item alert-err" onclick="window.location='logistica.html'">
+            <div class="ai-icon">🚨</div>
+            <div><div class="ai-title">OC-2026-0847 vence HOY</div><div class="ai-desc">591 cajas · Walmart GT · Rampa 5002 · 06:00 AM</div><div class="ai-time">Hace 2 horas</div></div>
+          </div>
+          <div class="alert-item alert-warn" onclick="window.location='bpm.html'">
+            <div class="ai-icon">⚠️</div>
+            <div><div class="ai-title">BPM Roedores incompleto</div><div class="ai-desc">Estación norte sin registrar · Semana 9</div><div class="ai-time">Ayer</div></div>
+          </div>
+          <div class="alert-item alert-info" onclick="window.location='logistica.html'">
+            <div class="ai-icon">📋</div>
+            <div><div class="ai-title">Nueva OC — EDI 850 recibido</div><div class="ai-desc">Walmart HN · 325 cajas brócoli · 05 Mar</div><div class="ai-time">Hace 4 horas</div></div>
+          </div>
+          <div class="alert-item alert-ok" onclick="window.location='finanzas.html'">
+            <div class="ai-icon">✅</div>
+            <div><div class="ai-title">FEL certificada SAT</div><div class="ai-desc">FAC-2026-00245 · Q12,450 · La Torre CR</div><div class="ai-time">Hace 1 hora</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">📦 Últimas órdenes</div>
+            <a href="logistica.html" class="panel-more">Ver todas →</a>
+          </div>
+          <div id="miniOrders"></div>
+        </div>
+      </div>
+
+      <!-- Module shortcuts — SIN módulo de agricultores (ese es el otro perfil) -->
+      <div class="anim d4">
+        <div style="font-family:var(--fd);font-size:.95rem;font-weight:800;color:var(--g8);margin-bottom:14px">🚀 Módulos</div>
+        <div class="mod-grid">
+          <a href="logistica.html" class="mod-card mod-log">
+            <div class="mc-icon">📦</div>
+            <div class="mc-name">Pedidos & Logística</div>
+            <div class="mc-sub">EDI 850·855·856·810 · GPS</div>
+            <div class="mc-val" style="color:var(--info)">7 pendientes</div>
+          </a>
+          <a href="bpm.html" class="mod-card mod-bpm">
+            <div class="mc-icon">🔬</div>
+            <div class="mc-name">Control BPM</div>
+            <div class="mc-sub">12 módulos · Semanales</div>
+            <div class="mc-val" style="color:var(--g4)">85% ✅</div>
+          </a>
+          <a href="finanzas.html" class="mod-card mod-fin">
+            <div class="mc-icon">💰</div>
+            <div class="mc-name">Finanzas & FEL</div>
+            <div class="mc-sub">5 países · CxC · CxP</div>
+            <div class="mc-val" style="color:var(--teal)">Q84,250</div>
+          </a>
+          <a href="rrhh.html" class="mod-card mod-rrhh">
+            <div class="mc-icon">👥</div>
+            <div class="mc-name">RRHH & Empleados</div>
+            <div class="mc-sub">Planillas · Asistencia · Cargos</div>
+            <div class="mc-val" style="color:var(--err)">32 activos</div>
+          </a>
+          <a href="empresa.html" class="mod-card mod-emp">
+            <div class="mc-icon">⚙️</div>
+            <div class="mc-name">Multi-Empresa & APIs</div>
+            <div class="mc-sub">Tenants · SAP · Ediwin · FEL</div>
+            <div class="mc-val" style="color:#7C3AED">Configurar →</div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODALS ═══════ -->
+<div class="modal-bg" id="tenantModal" onclick="if(event.target===this)closeModal('tenantModal')">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span class="modal-title">🏢 Cambiar empresa</span>
+      <button class="modal-close" onclick="closeModal('tenantModal')">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <div onclick="switchTenant('AJÚA')" style="display:flex;gap:11px;align-items:center;padding:13px;border:1.5px solid var(--g3);border-radius:var(--r3);background:rgba(39,112,63,.05);cursor:pointer">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--g4),var(--g1));display:flex;align-items:center;justify-content:center;font-size:20px">🥦</div>
+        <div style="flex:1"><div style="font-weight:700">Agroindustria AJÚA</div><div style="font-size:.75rem;color:var(--t3)">Empacador Premium · GT · HN</div></div>
+        <span class="chip chip-green">Activo</span>
+      </div>
+      <div onclick="switchTenant('Verduras del Campo')" style="display:flex;gap:11px;align-items:center;padding:13px;border:1px solid var(--bdr);border-radius:var(--r3);cursor:pointer" onmouseover="this.style.background='var(--p9)'" onmouseout="this.style.background=''">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--info),#60A5FA);display:flex;align-items:center;justify-content:center;font-size:20px">🌽</div>
+        <div><div style="font-weight:700">Verduras del Campo S.A.</div><div style="font-size:.75rem;color:var(--t3)">Empacador Estándar · SV · CR</div></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-primary btn-sm" onclick="closeModal('tenantModal')">Aceptar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="notiModal" onclick="if(event.target===this)closeModal('notiModal')">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span class="modal-title">🔔 Notificaciones (4)</span>
+      <button class="modal-close" onclick="closeModal('notiModal')">✕</button>
+    </div>
+    <div class="alert-item alert-err"><div class="ai-icon">🚨</div><div><div class="ai-title">OC-0847 vence HOY · 06:00</div><div class="ai-desc">Walmart GT · 591 cajas</div><div class="ai-time">Hace 2 horas</div></div></div>
+    <div class="alert-item alert-warn"><div class="ai-icon">⚠️</div><div><div class="ai-title">BPM Roedores pendiente</div><div class="ai-desc">Estación norte · Semana 9</div><div class="ai-time">Ayer</div></div></div>
+    <div class="alert-item alert-info"><div class="ai-icon">📋</div><div><div class="ai-title">EDI 850 recibido · Walmart HN</div><div class="ai-desc">OC-2026-0848 · 325 cajas</div><div class="ai-time">Hace 4 horas</div></div></div>
+    <div class="alert-item alert-ok"><div class="ai-icon">✅</div><div><div class="ai-title">FEL certificada SAT</div><div class="ai-desc">FAC-00245 · Q12,450</div><div class="ai-time">Hace 1 hora</div></div></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('notiModal')">Marcar leído</button>
+      <button class="btn btn-primary btn-sm" onclick="closeModal('notiModal')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="build-stamp">AGRICHAIN PRO v3.0 · Dashboard Empacador · Build 2026-03-01 20:03 UTC</div>
+
+<script>
+'use strict';
+// ── DATE & GREETING ──────────────────────────────────────────
+(function(){
+  const now = new Date();
+  const h   = now.getHours();
+  const g   = h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';
+  document.getElementById('greeting').textContent = `${g}, Ricardo 👋`;
+  const long = now.toLocaleDateString('es-GT',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('fullDate').textContent =
+    long.charAt(0).toUpperCase()+long.slice(1)+' · Semana 9 · Perfil: Empacador · AJÚA';
+  document.getElementById('dateStr').textContent =
+    now.toLocaleDateString('es-GT',{weekday:'short',day:'numeric',month:'short'});
+})();
+
+// ── CALENDAR ─────────────────────────────────────────────────
+(function(){
+  const DAYS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const el = document.getElementById('calStrip');
+  for(let i=-3;i<=8;i++){
+    const d = new Date(2026,2,1+i);
+    const has = [1,2,4,5,7,8,10].includes(d.getDate());
+    const cnt = has ? Math.floor(Math.random()*7)+2 : 0;
+    const div = document.createElement('div');
+    div.className = 'cal-day'+(i===0?' today':'')+(has?' has-orders':'');
+    div.innerHTML = `<div class="cal-dow">${DAYS[d.getDay()]}</div>
+      <div class="cal-num">${d.getDate()}</div>
+      <div class="cal-cnt">${cnt?cnt+' ent.':'—'}</div>`;
+    div.addEventListener('click',()=>showToast(`📅 ${d.getDate()} Mar · ${cnt} entregas`,'info'));
+    el.appendChild(div);
+  }
+})();
+
+// ── BAR CHART ────────────────────────────────────────────────
+(function(){
+  const data=[{l:'Lun',e:62,p:75},{l:'Mar',e:78,p:88},{l:'Mié',e:65,p:70},
+    {l:'Jue',e:92,p:90},{l:'Vie',e:82,p:95},{l:'Sáb',e:48,p:55},{l:'Dom',e:22,p:28}];
+  const el=document.getElementById('barChart');
+  data.forEach(d=>{
+    const g=document.createElement('div');
+    g.className='bar-group';
+    g.innerHTML=`<div class="bar bar-a" style="height:${d.e}%"></div>
+      <div class="bar bar-b" style="height:${d.p}%"><span class="bar-lbl">${d.l}</span></div>`;
+    el.appendChild(g);
+  });
+})();
+
+// ── MINI ORDERS ──────────────────────────────────────────────
+(function(){
+  const orders=[
+    {id:'OC-2026-0847',store:'Walmart GT',flag:'🇬🇹',cajas:591,status:'pendiente'},
+    {id:'OC-2026-0846',store:'Walmart HN',flag:'🇭🇳',cajas:325,status:'pendiente'},
+    {id:'OC-2026-0845',store:'La Torre CR',flag:'🇨🇷',cajas:218,status:'en_ruta'},
+    {id:'OC-2026-0844',store:'S. Selectos SV',flag:'🇸🇻',cajas:430,status:'entregado'},
+    {id:'OC-2026-0843',store:'Walmart GT',flag:'🇬🇹',cajas:275,status:'entregado'},
+  ];
+  const chips={
+    pendiente:'<span class="chip chip-gold">⏳ Pendiente</span>',
+    en_ruta:  '<span class="chip chip-blue">🚛 En ruta</span>',
+    entregado:'<span class="chip chip-green">✅ Entregado</span>',
+  };
+  const el=document.getElementById('miniOrders');
+  orders.forEach(o=>{
+    const r=document.createElement('div');
+    r.className='stat-row';
+    r.onclick=()=>window.location='logistica.html';
+    r.innerHTML=`<div class="sr-icon" style="background:var(--card2)">${o.flag}</div>
+      <div style="flex:1;overflow:hidden">
+        <div class="sr-title" style="font-family:var(--fm);font-size:.78rem">${o.id}</div>
+        <div class="sr-sub">${o.store} · ${o.cajas.toLocaleString()} cajas</div>
+      </div>${chips[o.status]}`;
+    el.appendChild(r);
+  });
+})();
+
+// ── MODALS ───────────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function switchTenant(n){closeModal('tenantModal');showToast('🏢 Empresa: '+n,'ok');}
+
+// ── SYNC ─────────────────────────────────────────────────────
+function syncAll(){
+  showToast('🔄 Sincronizando EDI…','info');
+  const el=document.getElementById('syncTime');
+  el.textContent='Sincronizando…';
+  setTimeout(()=>{el.textContent='Ahora mismo';showToast('✅ Sync completo · 2 nuevas órdenes','ok');},2200);
+}
+
+// ── TOAST ────────────────────────────────────────────────────
+let _tt;
+function showToast(msg,type='ok'){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='toast '+type+' show';
+  clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('show'),3400);
+}
+</script>
+</body>
+</html>
