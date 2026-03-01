@@ -887,7 +887,7 @@ tr:hover td{background:var(--green-pale);}
 </div>
 </div>
 <p style="font-size:.68rem;color:var(--muted2);margin-bottom:10px;">Marcar SI / NO para cada elemento:</p>
-<table class="cl-table" style="margin-bottom:14px;">
+<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table class="cl-table" style="margin-bottom:14px;">
 <thead><tr>
 <th style="text-align:left;width:160px">Área</th>
 <th style="text-align:left">Elemento</th>
@@ -936,6 +936,7 @@ tr:hover td{background:var(--green-pale);}
 <div style="overflow-x:auto;">
 <table><thead><tr><th>Fecha</th><th>Responsable</th><th>Hora</th><th>Placa</th><th>Tipo</th><th>Ext.Furgón</th><th>Carrocería</th><th>Barrido</th><th>Desinfección</th><th>Cabina</th><th>Fotos</th><th>Obs</th><th></th></tr></thead>
 <tbody id="tl-tbody"></tbody></table>
+</div>
 </div>
 </div>
 </div>
@@ -993,7 +994,7 @@ tr:hover td{background:var(--green-pale);}
 </div>
 <div class="fg"><label>Temperatura de Carga (°C)</label><input type="number" id="dt-temp" placeholder="Ej. 4" step="0.1"></div>
 </div>
-<table class="cl-table" style="margin-bottom:14px;">
+<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table class="cl-table" style="margin-bottom:14px;">
 <thead><tr><th style="text-align:left">Área</th><th style="text-align:left;width:300px">Criterio de Control</th><th>¿Cumple?</th><th style="text-align:left;width:150px">Observaciones</th></tr></thead>
 <tbody id="dt-checklist"></tbody>
 </table>
@@ -1133,6 +1134,7 @@ tr:hover td{background:var(--green-pale);}
 </div>
 </div>
 </div>
+</div>
 <div class="sec" id="sec-bodega-limpieza">
 <div class="ph"><h1>Control de Limpieza — Bodega</h1><p>Verificación diaria de limpieza y desinfección por áreas</p></div>
 <div class="card">
@@ -1147,9 +1149,9 @@ tr:hover td{background:var(--green-pale);}
 </div>
 <div class="fg"><label>Hora Limpieza</label><input type="time" id="bl-hora"></div>
 </div>
-<table class="cl-table" style="margin-bottom:14px;"><thead><tr>
+<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table class="cl-table" style="margin-bottom:14px;"><thead><tr>
 <th style="text-align:left">Categoría</th><th style="text-align:left">Elemento</th><th>SI</th><th>NO</th><th>N/A</th>
-</tr></thead><tbody id="bl-checklist"></tbody></table>
+</tr></thead><tbody id="bl-checklist"></tbody></table></div>
 <div class="fg" style="margin-bottom:12px;"><label>Comentarios y Recomendaciones</label><textarea id="bl-obs" rows="2" placeholder="Observaciones generales..."></textarea></div>
 <div class="fa">
 <button class="btn bp" onclick="saveBL()">Guardar Registro</button>
@@ -1489,10 +1491,10 @@ tr:hover td{background:var(--green-pale);}
 <select id="vp-mes"><option>Enero</option><option>Febrero</option><option>Marzo</option><option>Abril</option><option>Mayo</option><option>Junio</option><option>Julio</option><option>Agosto</option><option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option>Diciembre</option></select>
 </div>
 </div>
-<table class="cl-table" style="margin-bottom:14px;">
+<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table class="cl-table" style="margin-bottom:14px;">
 <thead><tr><th style="text-align:left">Nivel</th><th style="text-align:left">Elemento</th><th>✔ Cumple</th><th>✕ No Cumple</th><th style="text-align:left;width:150px">Observaciones</th></tr></thead>
 <tbody id="vp-checklist"></tbody>
-</table>
+</table></div>
 <div class="fa"><button class="btn bp" onclick="saveVP()">Guardar Revisión</button><button class="btn bo" onclick="printSec('sec-vidrio')">🖨 Imprimir</button></div>
 </div>
 <div class="tw">
@@ -5985,27 +5987,22 @@ function buildRodTrampas() {
     const color = t.nivel === 1 ? 'var(--acc2)' : 'var(--info)';
     const row = document.createElement('div');
     row.id = `rod-row-${t.id}`;
-    row.style.cssText = `display:flex;flex-direction:column;padding:10px 12px;background:var(--s2);border-radius:8px;border:1.5px solid transparent;transition:all .15s;gap:8px;`;
+    row.style.cssText = `display:grid;grid-template-columns:auto 1fr auto auto auto;align-items:center;gap:8px;padding:8px 10px;background:var(--s2);border-radius:6px;border:1.5px solid transparent;transition:all .15s;margin-bottom:4px;`;
     row.innerHTML = `
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="width:28px;height:28px;border-radius:4px;background:${color}1a;border:1.5px solid ${color}44;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:${color};flex-shrink:0;">${t.id}</div>
-        <div>
-          <div style="font-size:.82rem;font-weight:600;">${t.label}</div>
-          <div style="font-size:.65rem;color:var(--muted2);">📍 ${t.ubicacion}</div>
-        </div>
+      <div style="width:24px;height:24px;border-radius:4px;background:${color}1a;border:1.5px solid ${color}44;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:${color};">${t.id}</div>
+      <div>
+        <div style="font-size:.75rem;font-weight:600;color:var(--tx);">${t.label}</div>
+        <div style="font-size:.62rem;color:var(--muted2);">${t.ubicacion}</div>
       </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.74rem;padding:7px 12px;border:1.5px solid var(--br);border-radius:6px;transition:.15s;flex:1;min-width:90px;justify-content:center;" id="rod-lbl-rev-${t.id}">
-          <input type="checkbox" id="rod-rev-${t.id}" onchange="rodUpdate(${t.id})" style="accent-color:var(--acc);width:16px;height:16px;"> Revisada
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.74rem;padding:7px 12px;border:1.5px solid var(--br);border-radius:6px;transition:.15s;flex:1;min-width:90px;justify-content:center;" id="rod-lbl-lugar-${t.id}">
-          <input type="checkbox" id="rod-lugar-${t.id}" onchange="rodUpdate(${t.id})" style="accent-color:var(--acc);width:16px;height:16px;"> En lugar
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.74rem;padding:7px 12px;border:1.5px solid var(--br);border-radius:6px;transition:.15s;flex:1;min-width:90px;justify-content:center;" id="rod-lbl-nov-${t.id}">
-          <input type="checkbox" id="rod-nov-${t.id}" onchange="rodUpdate(${t.id})" style="accent-color:var(--warn);width:16px;height:16px;"> Con novedad
-        </label>
-        <input id="rod-nota-${t.id}" placeholder="Nota..." style="background:var(--s3);border:1.5px solid var(--br);color:var(--txt);padding:7px 10px;border-radius:6px;font-family:var(--fm);font-size:.74rem;width:100%;display:none;">
-      </div>`;
+      <label style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;font-size:.6rem;color:var(--muted2);">
+        <input type="radio" name="rod_${t.id}" value="revisada" style="accent-color:var(--acc);width:16px;height:16px;" onchange="rodUpdateRow(${t.id})"> Revisada
+      </label>
+      <label style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;font-size:.6rem;color:var(--muted2);">
+        <input type="radio" name="rod_${t.id}" value="en_lugar" style="accent-color:var(--acc2);width:16px;height:16px;" onchange="rodUpdateRow(${t.id})"> En lugar
+      </label>
+      <label style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;font-size:.6rem;color:var(--danger);">
+        <input type="radio" name="rod_${t.id}" value="con_novedad" style="accent-color:var(--danger);width:16px;height:16px;" onchange="rodUpdateRow(${t.id})"> Novedad
+      </label>`;
     container.appendChild(row);
   });
 }
@@ -11377,7 +11374,8 @@ function limpiarTodo() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  const td = new Date().toISOString().split('T')[0];
+  const _gtNow = new Date(Date.now() - 6*60*60*1000);
+  const td = _gtNow.toISOString().split('T')[0]; // Guatemala UTC-6
   document.querySelectorAll('input[type=date]').forEach(i => { if(!i.value) i.value = td; });
   try { renderAll(); } catch(e) { console.error('renderAll error:', e); }
   try { fbCheckConfig(); } catch(e) { console.error('fbCheckConfig error:', e); }
@@ -11407,7 +11405,5 @@ window.addEventListener('DOMContentLoaded', () => {
         .catch(e => console.log('SW error', e));
     }
   </script>
-</body>
-
 </body>
 </html>
