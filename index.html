@@ -745,216 +745,369 @@ tr:hover td{background:var(--green-pale);}
 </style>
 
 <style>
-/* ═══ SIDEBAR SHELL v3 — añadido sobre el CSS original ═══ */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+/* ══ AJÚA v3 · Sidebar Shell — injected, no originals removed ══ */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
-/* Override layout — sidebar left, main right */
+:root {
+  --sb-bg:      #0D1F14;
+  --sb-bg2:     #122018;
+  --sb-hover:   rgba(255,255,255,.055);
+  --sb-active:  rgba(84,204,150,.13);
+  --sb-border:  rgba(255,255,255,.07);
+  --sb-green:   #84CC96;
+  --sb-green2:  #27703F;
+  --sb-txt:     rgba(255,255,255,.88);
+  --sb-muted:   rgba(255,255,255,.35);
+  --sb-label:   rgba(255,255,255,.25);
+  --sb-width:   252px;
+}
+
+/* ── LAYOUT ── */
 .app {
   display: grid !important;
-  grid-template-columns: 252px 1fr !important;
+  grid-template-columns: var(--sb-width) 1fr !important;
   grid-template-rows: 1fr !important;
   height: 100vh !important;
   overflow: hidden !important;
+  background: #f4f2df !important;
 }
 
-/* ── SIDEBAR (was header) ── */
+/* ── SIDEBAR = header element ── */
 header {
   grid-column: 1 !important;
   grid-row: 1 !important;
-  background: #081E10 !important;
-  border-right: 1px solid rgba(255,255,255,.08) !important;
-  border-bottom: none !important;
   display: flex !important;
   flex-direction: column !important;
+  background: var(--sb-bg) !important;
+  border-right: 1px solid var(--sb-border) !important;
+  border-bottom: none !important;
   height: 100vh !important;
   overflow: hidden !important;
   position: relative !important;
-}
-header::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(ellipse at 30% 15%, rgba(52,140,82,.07) 0%, transparent 55%);
+  z-index: 200 !important;
 }
 
-/* Brand block */
-.sb-brand-block {
-  padding: 16px 14px 12px;
-  border-bottom: 1px solid rgba(255,255,255,.08);
+/* ── BRAND ── */
+.sb-brand {
+  padding: 14px 12px 10px;
+  border-bottom: 1px solid var(--sb-border);
   flex-shrink: 0;
 }
-.sb-logo-row {
+.sb-brand-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   margin-bottom: 10px;
 }
-.sb-logo-ico {
-  width: 36px; height: 36px;
-  border-radius: 10px;
-  background: linear-gradient(135deg,#27703F,#84CC96);
+.sb-brand-ico {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--sb-green2), var(--sb-green));
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-  box-shadow: 0 2px 12px rgba(52,140,82,.35);
+  font-size: 17px;
+  box-shadow: 0 2px 10px rgba(39,112,63,.4);
   flex-shrink: 0;
 }
-.sb-logo-name { font-family:'Outfit',sans-serif; font-size:.95rem; font-weight:800; color:rgba(255,255,255,.92); }
-.sb-logo-ver  { font-size:.55rem; color:#84CC96; font-weight:600; letter-spacing:.1em; text-transform:uppercase; opacity:.7; }
+.sb-brand-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: .93rem;
+  font-weight: 800;
+  color: var(--sb-txt);
+  line-height: 1.1;
+}
+.sb-brand-sub {
+  font-size: .55rem;
+  font-weight: 700;
+  color: var(--sb-green);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  opacity: .7;
+}
+
+/* ── TENANT ── */
 .sb-tenant {
-  display: flex; align-items: center; gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   background: rgba(255,255,255,.045);
-  border: 1px solid rgba(255,255,255,.08);
+  border: 1px solid var(--sb-border);
   border-radius: 10px;
   padding: 7px 9px;
+  cursor: pointer;
+  transition: background .13s;
 }
-.sb-tenant-ico { width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#27703F,#84CC96);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0; }
-.sb-tenant-name { font-size:.76rem;font-weight:700;color:rgba(255,255,255,.88); }
-.sb-tenant-sub  { font-size:.59rem;color:rgba(255,255,255,.3); }
-.sb-status-row {
-  display: flex; align-items: center; gap: 6px;
-  padding: 5px 7px;
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.06);
+.sb-tenant:hover { background: var(--sb-hover); }
+.sb-tenant-ico {
+  width: 26px; height: 26px;
   border-radius: 7px;
-  margin-top: 8px;
+  background: rgba(84,204,150,.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
 }
-.sb-dot { width:6px;height:6px;border-radius:50%;flex-shrink:0; }
-.sb-dot-ok   { background:#84CC96; animation: sbpulse 2.4s infinite; }
-.sb-dot-warn { background:#F0B429; }
-.sb-dot-off  { background:rgba(255,255,255,.25); }
-@keyframes sbpulse{0%,100%{opacity:1;}50%{opacity:.35;}}
-#fb-status-txt { font-size:.65rem; color:rgba(255,255,255,.45); flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-#sb-clock { font-size:.62rem; color:rgba(255,255,255,.3); font-family:monospace; flex-shrink:0; }
+.sb-tenant-info { flex: 1; overflow: hidden; }
+.sb-tenant-name { font-size: .76rem; font-weight: 700; color: var(--sb-txt); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-tenant-sub  { font-size: .59rem; color: var(--sb-muted); display: block; }
+.sb-tenant-arrow { font-size: .65rem; color: var(--sb-muted); }
 
-/* Nav scrollable */
+/* ── STATUS BAR ── */
+.sb-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+  padding: 4px 6px;
+  border-radius: 7px;
+  background: rgba(255,255,255,.03);
+}
+.sb-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: var(--sb-muted); }
+.sb-dot-ok   { background: var(--sb-green) !important; animation: sbpulse 2.4s infinite; }
+.sb-dot-warn { background: #F0B429 !important; }
+@keyframes sbpulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+#fb-status-txt { font-size: .62rem; color: var(--sb-muted); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#sb-clock      { font-size: .6rem;  color: rgba(255,255,255,.22); font-family: monospace; flex-shrink: 0; }
+
+/* ── NAV SCROLL AREA ── */
 nav#main-nav {
   flex: 1 !important;
   overflow-y: auto !important;
-  padding: 8px 8px !important;
+  overflow-x: hidden !important;
+  padding: 8px 8px 4px !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 1px !important;
+  /* Reset any original nav styles */
   background: transparent !important;
-  width: auto !important;
-  position: relative !important;
+  position: static !important;
   transform: none !important;
-  top: auto !important;
-  left: auto !important;
+  width: auto !important;
   height: auto !important;
   box-shadow: none !important;
   border: none !important;
+  top: auto !important; left: auto !important;
 }
-nav#main-nav::-webkit-scrollbar { width:3px; }
-nav#main-nav::-webkit-scrollbar-thumb { background:rgba(255,255,255,.12); border-radius:2px; }
+nav#main-nav::-webkit-scrollbar { width: 3px; }
+nav#main-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
 
-/* Nav section labels */
+/* ── SECTION LABELS ── */
 .ns {
-  font-size: .56rem !important;
+  font-size: .55rem !important;
   font-weight: 800 !important;
-  letter-spacing: .11em !important;
+  letter-spacing: .12em !important;
   text-transform: uppercase !important;
-  color: rgba(255,255,255,.28) !important;
-  padding: 9px 7px 3px !important;
-  margin-top: 3px !important;
+  color: var(--sb-label) !important;
+  padding: 10px 8px 3px !important;
+  margin-top: 2px !important;
   background: transparent !important;
 }
 
-/* Nav items */
+/* ── NAV ITEMS ── */
 .ni {
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
   padding: 7px 8px !important;
-  border-radius: 10px !important;
-  cursor: pointer !important;
-  transition: all .13s !important;
+  border-radius: 9px !important;
   border: 1px solid transparent !important;
+  cursor: pointer !important;
+  transition: all .12s !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
   font-size: .79rem !important;
   font-weight: 600 !important;
-  color: rgba(255,255,255,.52) !important;
+  color: var(--sb-muted) !important;
   background: transparent !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
+  position: relative !important;
 }
 .ni:hover {
-  background: rgba(255,255,255,.055) !important;
-  color: rgba(255,255,255,.85) !important;
+  background: var(--sb-hover) !important;
+  color: var(--sb-txt) !important;
 }
 .ni.active {
-  background: rgba(84,204,150,.12) !important;
-  border-color: rgba(84,204,150,.22) !important;
-  color: #84CC96 !important;
+  background: var(--sb-active) !important;
+  border-color: rgba(84,204,150,.2) !important;
+  color: var(--sb-green) !important;
   font-weight: 700 !important;
 }
+
+/* ── ITEM ICON ── */
 .ico {
-  width: 26px !important; height: 26px !important;
+  width: 27px !important;
+  height: 27px !important;
   border-radius: 7px !important;
   background: rgba(255,255,255,.05) !important;
-  display: flex !important; align-items: center !important; justify-content: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   font-size: 13px !important;
   flex-shrink: 0 !important;
 }
 .ni.active .ico { background: rgba(84,204,150,.18) !important; }
-.ni:hover .ico  { background: rgba(255,255,255,.09) !important; }
+.ni:hover  .ico { background: rgba(255,255,255,.08) !important; }
 
-/* Sidebar footer */
-.sb-foot {
-  padding: 10px 8px;
-  border-top: 1px solid rgba(255,255,255,.08);
+/* ── BADGE on nav item ── */
+.nb {
+  margin-left: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 100px;
+  background: #E53E3E;
+  color: #fff;
+  font-size: .6rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
-.sb-user-row {
-  display: flex; align-items: center; gap: 8px;
-  padding: 7px 8px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all .13s;
+.nb-warn { background: #D97706; }
+
+/* ── USER FOOTER ── */
+.sb-foot {
+  padding: 8px 8px 10px;
+  border-top: 1px solid var(--sb-border);
+  flex-shrink: 0;
 }
-.sb-user-row:hover { background: rgba(255,255,255,.055); }
+.sb-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background .12s;
+}
+.sb-user:hover { background: var(--sb-hover); }
 .sb-av {
-  width: 30px; height: 30px; border-radius: 50%;
-  background: linear-gradient(135deg,#D49420,#84CC96);
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #D97706, var(--sb-green));
   display: flex; align-items: center; justify-content: center;
+  font-family: 'Outfit', sans-serif;
   font-weight: 800; font-size: .63rem; color: #fff;
   flex-shrink: 0;
 }
-#auth-user-name { font-size:.78rem; font-weight:700; color:rgba(255,255,255,.88); display:block; }
-#auth-user-role { font-size:.6rem; color:rgba(255,255,255,.3); display:block; }
+#auth-user-name { font-size: .77rem; font-weight: 700; color: var(--sb-txt); display: block; line-height: 1.2; }
+#auth-user-role { font-size: .6rem;  color: var(--sb-muted); display: block; }
+.sb-logout-ico  { font-size: .65rem; color: rgba(255,255,255,.18); margin-left: auto; }
 
-/* ── MAIN ── */
+/* ── MAIN CONTENT ── */
 main {
   grid-column: 2 !important;
   grid-row: 1 !important;
   overflow-y: auto !important;
   height: 100vh !important;
-  padding: 24px 28px 56px !important;
+  padding: 0 !important;
+  background: var(--bg) !important;
 }
 
-/* ── LOGIN screen — dark background ── */
-#login-screen {
-  background: linear-gradient(135deg,#04100A 0%,#081E10 60%,#0a2912 100%) !important;
+/* Topbar inside main */
+.main-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fdfceb;
+  border-bottom: 1px solid #dbd7b0;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
 }
-#login-card {
-  background: #FAFAF4 !important;
-  border-radius: 18px !important;
-  box-shadow: 0 20px 60px rgba(0,0,0,.55) !important;
+.mt-breadcrumb {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: .78rem;
+  color: #7a8a70;
+  font-weight: 500;
 }
+.mt-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mt-date {
+  font-size: .75rem;
+  color: #7a8a70;
+  background: #f0edcc;
+  border: 1px solid #dbd7b0;
+  border-radius: 7px;
+  padding: 4px 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+}
+.mt-icon-btn {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: #f0edcc;
+  border: 1px solid #dbd7b0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all .12s;
+  color: #3a4a38;
+}
+.mt-icon-btn:hover { background: #e8e4cc; }
+.mt-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #f0edcc;
+  border: 1px solid #dbd7b0;
+  border-radius: 20px;
+  padding: 4px 10px 4px 4px;
+  cursor: pointer;
+}
+.mt-av {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#D97706,#84CC96);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .6rem; font-weight: 800; color: #fff;
+}
+#mt-user-name  { font-size: .72rem; font-weight: 700; color: #1a2318; }
+#mt-user-role  { font-size: .58rem; color: #7a8a70; }
 
-/* Hide old header elements */
+.main-content-pad { padding: 24px 24px 56px; }
+
+/* ── HIDE OLD HEADER ELEMENTS ── */
 .logo, .hright, .hbadge, #hclock { display: none !important; }
 .hamburger { display: none !important; }
-.nav-overlay { z-index: 199; }
+
+/* ── LOGIN ── */
+#login-screen {
+  background: linear-gradient(135deg,#040E08 0%,#081E10 55%,#0a2914 100%) !important;
+}
+#login-card {
+  background: #fdfceb !important;
+  border-radius: 18px !important;
+  box-shadow: 0 24px 64px rgba(0,0,0,.55) !important;
+}
 
 /* ── MOBILE ── */
-@media(max-width:768px){
-  .app { display:block !important; height:auto !important; overflow:visible !important; }
-  header { position:fixed !important; top:0;left:0;bottom:0; width:252px; transform:translateX(-100%); transition:transform .22s; z-index:200; height:100vh !important; }
-  header.open { transform:translateX(0) !important; }
-  .hamburger { display:flex !important; align-items:center; justify-content:center; position:fixed; top:10px; left:10px; z-index:201; background:#081E10; border:1px solid rgba(255,255,255,.12); border-radius:8px; color:#fff; width:36px; height:36px; font-size:15px; cursor:pointer; }
-  .nav-overlay.open { display:block !important; position:fixed; inset:0; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); }
-  main { padding: 56px 14px 44px !important; }
+@media (max-width: 768px) {
+  .app { display: block !important; height: auto !important; overflow: visible !important; }
+  header {
+    position: fixed !important; top: 0; left: 0; bottom: 0;
+    width: var(--sb-width); height: 100vh !important;
+    transform: translateX(-100%);
+    transition: transform .22s cubic-bezier(.4,0,.2,1);
+    z-index: 200;
+  }
+  header.open { transform: translateX(0) !important; }
+  .hamburger {
+    display: flex !important;
+    align-items: center; justify-content: center;
+    position: fixed; top: 10px; left: 10px; z-index: 201;
+    width: 36px; height: 36px;
+    background: var(--sb-bg); border: 1px solid var(--sb-border);
+    border-radius: 8px; color: #fff; font-size: 15px; cursor: pointer;
+  }
+  .nav-overlay.open { display: block !important; position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(3px); z-index: 199; }
+  .main-content-pad { padding: 14px 14px 44px; }
+  .main-topbar { padding: 8px 14px; margin-left: 44px; }
 }
 </style>
 
@@ -1050,63 +1203,75 @@ main {
 </div>
 <div class="app">
 <header>
-  <div class="sb-brand-block">
-    <div class="sb-logo-row">
-      <div class="sb-logo-ico">🥦</div>
+  <!-- BRAND -->
+  <div class="sb-brand">
+    <div class="sb-brand-row">
+      <div class="sb-brand-ico">🥦</div>
       <div>
-        <div class="sb-logo-name">AJÚA</div>
-        <div class="sb-logo-ver">BPM Control · v3 · GT</div>
+        <div class="sb-brand-name">AJÚA</div>
+        <div class="sb-brand-sub">BPM · V3.0 · 2026</div>
       </div>
     </div>
+    <!-- TENANT -->
     <div class="sb-tenant">
       <div class="sb-tenant-ico">🏭</div>
-      <div style="flex:1;overflow:hidden">
-        <div class="sb-tenant-name">Agroindustria AJÚA</div>
-        <div class="sb-tenant-sub">Empacador · GT · HN</div>
+      <div class="sb-tenant-info">
+        <span class="sb-tenant-name">Agroindustria AJÚA</span>
+        <span class="sb-tenant-sub">Empacador · GT · HN</span>
       </div>
+      <span class="sb-tenant-arrow">▾</span>
     </div>
-    <div class="sb-status-row">
-      <div class="sb-dot sb-dot-off" id="sb-dot"></div>
+    <!-- STATUS -->
+    <div class="sb-status">
+      <div class="sb-dot" id="sb-dot"></div>
       <span id="fb-status-txt">Iniciando…</span>
       <span id="sb-clock">--:--</span>
     </div>
   </div>
+
+  <!-- NAV -->
   <nav id="main-nav">
     <div class="ns">Principal</div>
     <div class="ni active" onclick="show('dashboard',this)"><span class="ico">📊</span>Dashboard</div>
+
+    <div class="ns">Operaciones</div>
+    <div class="ni" onclick="show('pedidos-walmart',this)"><span class="ico">📋</span>Pedidos Walmart</div>
+    <div class="ni" onclick="show('inv-salida',this)"><span class="ico">📦</span>Ventas Walmart</div>
+    <div class="ni" onclick="show('ventas-gt',this)"><span class="ico">🇬🇹</span>Despachos Locales GT</div>
+    <div class="ni" onclick="show('ventas-int',this)"><span class="ico">🌎</span>Exportación</div>
+    <div class="ni" onclick="show('inv-stock',this)"><span class="ico">📊</span>Stock Tiempo Real</div>
+    <div class="ni" onclick="show('inv-entrada',this)"><span class="ico">📥</span>Ingresos a Bodega</div>
+    <div class="ni" onclick="show('maquila',this)"><span class="ico">⚙️</span>Gastos Generales</div>
+
+    <div class="ns">Cotizador</div>
+    <div class="ni" onclick="show('inv-cotizador',this);cotMainTab('interno',null)"><span class="ico">🏭</span>Cotizador Interno</div>
+    <div class="ni" onclick="show('inv-cotizador',this);cotMainTab('terceros',null)"><span class="ico">🤝</span>Cotizador Terceros</div>
+    <div class="ni" onclick="show('inv-cotizador',this);cotMainTab('lista',null)"><span class="ico">📋</span>Lista Cotizaciones</div>
+
     <div class="ns">BPM · Transporte</div>
     <div class="ni" onclick="show('transporte-limpieza',this)"><span class="ico">🚛</span>Limpieza Transporte</div>
     <div class="ni" onclick="show('despacho',this)"><span class="ico">📋</span>Despacho Transporte</div>
+
     <div class="ns">BPM · Bodega</div>
     <div class="ni" onclick="show('bodega-limpieza',this)"><span class="ico">🏭</span>Limpieza Bodega</div>
     <div class="ni" onclick="show('fumigacion',this)"><span class="ico">🧪</span>Fumigación</div>
     <div class="ni" onclick="show('roedores',this)"><span class="ico">🐭</span>Roedores</div>
+
     <div class="ns">BPM · Personal</div>
     <div class="ni" onclick="show('capacitacion',this)"><span class="ico">🎓</span>Capacitación</div>
     <div class="ni" onclick="show('empleados-enfermos',this)"><span class="ico">🏥</span>Empleados Enfermos</div>
     <div class="ni" onclick="show('acceso-lavado',this)"><span class="ico">🙌</span>Acceso y Lavado</div>
     <div class="ni" onclick="show('visitas',this)"><span class="ico">👤</span>Visitas</div>
+
     <div class="ns">BPM · Calidad</div>
     <div class="ni" onclick="show('vidrio',this)"><span class="ico">🔍</span>Vidrio y Plástico</div>
     <div class="ni" onclick="show('basculas',this)"><span class="ico">⚖️</span>Básculas</div>
     <div class="ni" onclick="show('lavado-prod',this)"><span class="ico">💧</span>Lavado Producto</div>
-    <div class="ns">Inventario</div>
-    <div class="ni" onclick="show('inv-stock',this)"><span class="ico">📊</span>Stock Tiempo Real</div>
-    <div class="ni" onclick="show('inv-entrada',this)"><span class="ico">📥</span>Ingresos a Bodega</div>
-    <div class="ni" onclick="show('maquila',this)"><span class="ico">⚙️</span>Gastos Generales</div>
-    <div class="ns">Walmart</div>
-    <div class="ni" onclick="show('pedidos-walmart',this)"><span class="ico">📋</span>Pedidos Walmart</div>
-    <div class="ni" onclick="show('inv-salida',this)"><span class="ico">📦</span>Ventas Walmart</div>
-    <div class="ns">Despachos</div>
-    <div class="ni" onclick="show('ventas-gt',this)"><span class="ico">🇬🇹</span>Locales GT</div>
-    <div class="ni" onclick="show('ventas-int',this)"><span class="ico">🌎</span>Exportación</div>
-    <div class="ns">Cotizador</div>
-    <div class="ni" onclick="show('inv-cotizador',this);cotMainTab('interno',null)"><span class="ico">🏭</span>Cotizador Interno</div>
-    <div class="ni" onclick="show('inv-cotizador',this);cotMainTab('terceros',null)"><span class="ico">🤝</span>Cotizador Terceros</div>
-    <div class="ni" onclick="show('inv-cotizador',this);cotMainTab('lista',null)"><span class="ico">📋</span>Lista Cotizaciones</div>
+
     <div class="ns">Reportes</div>
     <div class="ni" onclick="show('reporte',this)"><span class="ico">📊</span>Reporte General</div>
     <div class="ni" onclick="show('inv-trazabilidad',this)"><span class="ico">🔗</span>Trazabilidad</div>
+
     <div class="ns">Configuración</div>
     <div class="ni" onclick="show('inv-config',this)"><span class="ico">⚙</span>Productos y Present.</div>
     <div class="ni" onclick="show('proveedores',this)"><span class="ico">🏭</span>Proveedores</div>
@@ -1114,20 +1279,40 @@ main {
     <div class="ns" id="nav-ns-admin" style="display:none;">Administración</div>
     <div class="ni" id="nav-usuarios" onclick="show('usuarios',this)"><span class="ico">🔑</span>Usuarios y Accesos</div>
   </nav>
+
+  <!-- USER FOOTER -->
   <div class="sb-foot">
-    <div class="sb-user-row" onclick="authLogout()">
-      <div class="sb-av" id="sb-avatar">?</div>
+    <div class="sb-user" onclick="authLogout()">
+      <div class="sb-av" id="sb-avatar">RS</div>
       <div style="flex:1;overflow:hidden">
         <span id="auth-user-name">—</span>
         <span id="auth-user-role">—</span>
       </div>
-      <span style="font-size:.6rem;color:rgba(255,255,255,.2);" title="Salir">⏻</span>
+      <span class="sb-logout-ico">⏻</span>
     </div>
   </div>
 </header>
+
 <div class="nav-overlay" id="nav-overlay" onclick="toggleNav()"></div>
 <button class="hamburger" onclick="toggleNav()" id="hamburger-btn">☰</button>
+
 <main>
+<div class="main-topbar" id="main-topbar">
+  <span class="mt-breadcrumb" id="mt-breadcrumb">Dashboard</span>
+  <div class="mt-right">
+    <span class="mt-date" id="mt-date">—</span>
+    <div class="mt-icon-btn" title="Buscar">🔍</div>
+    <div class="mt-icon-btn" title="Notificaciones">🔔</div>
+    <div class="mt-user-chip">
+      <div class="mt-av" id="mt-avatar">RS</div>
+      <div>
+        <div id="mt-user-name">—</div>
+        <div id="mt-user-role">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="main-content-pad">
 <div class="sec active" id="sec-dashboard">
 <div class="ph"><h1>Dashboard BPM</h1><p id="fecha-hoy">—</p></div>
 <div id="dash-alerta" style="display:none;"></div>
@@ -3665,6 +3850,7 @@ main {
 <div id="usuarios-lista" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;padding:14px;"></div>
 </div>
 </div>
+</div>
 </main>
 </div>
 <div id="toast"></div>
@@ -4067,10 +4253,14 @@ function authApplySession() {
   // Update header
   const nameEl = document.getElementById('auth-user-name');
   const roleEl = document.getElementById('auth-user-role');
+  const initials = (AUTH_SESSION.nombre||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
   if (nameEl) nameEl.textContent = AUTH_SESSION.nombre;
   if (roleEl) roleEl.textContent = AUTH_ROLES[AUTH_SESSION.rol] || AUTH_SESSION.rol;
-  const avEl = document.getElementById('sb-avatar');
-  if (avEl) avEl.textContent = (AUTH_SESSION.nombre||'?').substring(0,2).toUpperCase();
+  // Topbar
+  const mtn=document.getElementById('mt-user-name'); if(mtn) mtn.textContent=AUTH_SESSION.nombre;
+  const mtr=document.getElementById('mt-user-role'); if(mtr) mtr.textContent=AUTH_ROLES[AUTH_SESSION.rol]||AUTH_SESSION.rol;
+  const mta=document.getElementById('mt-avatar');    if(mta) mta.textContent=initials;
+  const sba=document.getElementById('sb-avatar');    if(sba) sba.textContent=initials;
   // Filter nav
   authFilterNav();
 }
@@ -4362,25 +4552,17 @@ const ANTHROPIC_API_KEY = "sk-ant-api03-Hk2NsuAmtgt6IfKgqx2jAfQSQ0vTgz1CcbGwORnN
 
 // ── Mobile nav toggle ────────────────────────────────────────────
 function toggleNav() {
-  const sb      = document.querySelector('header');
-  const overlay = document.getElementById('nav-overlay');
-  const btn     = document.getElementById('hamburger-btn');
-  if (!sb) return;
-  const isOpen = sb.classList.contains('open');
-  sb.classList.toggle('open', !isOpen);
-  if (overlay) overlay.classList.toggle('open', !isOpen);
-  if (btn) btn.textContent = isOpen ? '☰' : '✕';
+  const sb=document.querySelector('header');const overlay=document.getElementById('nav-overlay');const btn=document.getElementById('hamburger-btn');
+  if(!sb)return; const isOpen=sb.classList.contains('open');
+  sb.classList.toggle('open',!isOpen); if(overlay)overlay.classList.toggle('open',!isOpen);
+  if(btn)btn.textContent=isOpen?'☰':'✕';
 }
 
 // Close nav when a menu item is clicked (mobile)
 function closeNavOnMobile() {
-  if (window.innerWidth > 768) return;
-  const sb      = document.querySelector('header');
-  const overlay = document.getElementById('nav-overlay');
-  const btn     = document.getElementById('hamburger-btn');
-  if (sb) sb.classList.remove('open');
-  if (overlay) overlay.classList.remove('open');
-  if (btn) btn.textContent = '☰';
+  if(window.innerWidth>768)return;
+  const sb=document.querySelector('header');const overlay=document.getElementById('nav-overlay');const btn=document.getElementById('hamburger-btn');
+  if(sb)sb.classList.remove('open');if(overlay)overlay.classList.remove('open');if(btn)btn.textContent='☰';
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -5423,19 +5605,10 @@ try {
 function fbShowStatus(status) {
   const el  = document.getElementById('fb-status-txt');
   const dot = document.getElementById('sb-dot');
-  if (!el) return;
-  const map = {
-    online:  '☁ En línea',
-    saving:  '↑ Guardando…',
-    offline: '⚠ Sin conexión — local',
-    config:  '⚙ Modo local',
-  };
-  const col = { online:'#84CC96', saving:'#F0B429', offline:'#F87171', config:'#F0B429' };
-  el.textContent = map[status] || '';
-  el.style.color = col[status] || 'rgba(255,255,255,.4)';
-  if (dot) {
-    dot.className = 'sb-dot ' + (status==='online'?'sb-dot-ok':status==='saving'?'sb-dot-warn':'sb-dot-off');
-  }
+  const col = {online:'#84CC96',saving:'#F0B429',offline:'#F87171',config:'#F0B429'};
+  const txt = {online:'☁ En línea',saving:'↑ Guardando…',offline:'⚠ Sin conexión',config:'⚙ Modo local'};
+  if (el)  { el.textContent = txt[status]||''; el.style.color = col[status]||'rgba(255,255,255,.35)'; }
+  if (dot) { dot.className='sb-dot'+(status==='online'?' sb-dot-ok':status==='saving'?' sb-dot-warn':''); }
 }
 
 // ── Firebase init ─────────────────────────────────────────────────
@@ -5562,11 +5735,14 @@ function tick(){
   const now=new Date();
   const ck=document.getElementById('sb-clock');if(ck)ck.textContent=now.toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit'});
   const fd=now.toLocaleDateString('es-GT',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const el=document.getElementById('fecha-hoy');if(el)el.textContent=fd;
+  const el=document.getElementById('fecha-hoy');if(el)el.textContent=fd; const mtd=document.getElementById('mt-date');if(mtd)mtd.textContent=new Date().toLocaleDateString('es-GT',{weekday:'short',day:'numeric',month:'short'});
 }
 setInterval(tick,1000);tick();
 
 function show(id,el){closeNavOnMobile();
+  // Update topbar breadcrumb
+  const bc=document.getElementById('mt-breadcrumb');
+  if(bc&&el){const txt=(el.textContent||'').replace(/[⬛📊📋📦📥📤⚙️⚙🔗🏭🧪🐭🎓🏥🙌👤🔍⚖️💧💰🤝🔑👥🌎🇬🇹]/gu,'').trim();if(txt)bc.textContent=txt;}
   if (AUTH_SESSION && id !== 'dashboard' && id !== 'usuarios') {
     if (!authCanAccess(id)) {
       toast('⚠ No tienes acceso a este módulo', true); return;
