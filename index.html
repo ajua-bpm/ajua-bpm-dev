@@ -783,7 +783,7 @@ tr:hover td{background:var(--green-pale);}
 <div style="font-size:2rem;margin-bottom:6px;">🌿</div>
 <div style="font-family:var(--fh);font-size:1.3rem;font-weight:700;color:var(--acc);">AJÚA</div>
 <div style="font-size:.72rem;color:var(--muted2);margin-top:3px;">Sistema de Control Interno</div>
-<div style="font-size:.62rem;color:var(--muted2);margin-top:4px;opacity:.7;">v 01/03/2026 04:31</div>
+<div style="font-size:.62rem;color:var(--muted2);margin-top:4px;opacity:.7;">v 01/03/2026 04:46</div>
 </div>
 <div style="margin-bottom:14px;">
 <label style="font-size:.68rem;color:var(--muted2);display:block;margin-bottom:5px;">Usuario</label>
@@ -1220,7 +1220,7 @@ tr:hover td{background:var(--green-pale);}
 <div class="fg"><label>Semana</label>
 <select id="fum-sem"><option>1</option><option>2</option><option>3</option><option>4</option></select>
 </div>
-<div class="fg"><label>Responsable</label><input id="fum-resp" value="BYRON FAJARDO"></div>
+<div class="fg"><label>Responsable</label><select id="fum-resp-sel"><option value="">— Seleccionar responsable —</option></select></div>
 </div>
 <div class="fgrid g3">
 <div class="fg"><label>Fecha Realización</label><input type="date" id="fum-fecha"></div>
@@ -1527,7 +1527,7 @@ tr:hover td{background:var(--green-pale);}
 <div class="ct">Nueva Revisión Mensual</div>
 <div class="fgrid g3">
 <div class="fg"><label>Fecha de Revisión</label><input type="date" id="vp-fecha"></div>
-<div class="fg"><label>Responsable</label><input id="vp-resp" placeholder="Nombre inspector"></div>
+<div class="fg"><label>Responsable</label><select id="vp-resp-sel"><option value="">— Seleccionar responsable —</option></select></div>
 <div class="fg"><label>Mes de Revisión</label>
 <select id="vp-mes"><option>Enero</option><option>Febrero</option><option>Marzo</option><option>Abril</option><option>Mayo</option><option>Junio</option><option>Julio</option><option>Agosto</option><option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option>Diciembre</option></select>
 </div>
@@ -3517,10 +3517,6 @@ function renderAll() {
   try { renderProveedores(); } catch(e) {}
   try { renderClientes(); }   catch(e) {}
   try { renderConductores(); } catch(e) {}
-  try { populateAllRespSelects(); } catch(e) {}
-  try { alBuildEmpTable(); }  catch(e) {}
-  try { capBuildAsistentesList(); } catch(e) {}
-  try { eePopulateSelect(); } catch(e) {}
   try { updateDash(); }       catch(e) {}
   try { populateAllRespSelects(); } catch(e) {}
   try { alBuildEmpTable(); }  catch(e) {}
@@ -5184,6 +5180,17 @@ async function initFirebase(firebaseConfig) {
     }
     _fbReady = true;
 
+    // Refresh ALL UI with cloud data immediately after load
+    try { renderAll(); } catch(e) {}
+    // Intentional: renderAll already calls populateAllRespSelects
+    // but call again to be sure selects are populated
+    setTimeout(() => {
+      try { populateAllRespSelects(); } catch(e) {}
+      try { alBuildEmpTable(); } catch(e) {}
+      try { capBuildAsistentesList(); } catch(e) {}
+      try { eePopulateSelect(); } catch(e) {}
+    }, 100);
+
     // Real-time listener — sync changes from other users instantly
     onSnapshot(docRef, (snap) => {
       if (!snap.exists() || _fbSaving) return;
@@ -5278,21 +5285,21 @@ function show(id,el){closeNavOnMobile();
       case 'dashboard':
         updateDash(); break;
       case 'transporte-limpieza':
-        buildTLChecklist(); renderTL(); break;
+        buildTLChecklist(); renderTL(); populateAllRespSelects(); break;
       case 'despacho':
-        buildDTChecklist(); renderDT(); break;
+        buildDTChecklist(); renderDT(); populateAllRespSelects(); break;
       case 'bodega-limpieza':
-        buildBLChecklist(); renderBL(); break;
+        buildBLChecklist(); renderBL(); populateAllRespSelects(); break;
       case 'roedores':
-        buildRodTrampas(); renderRod(); break;
+        buildRodTrampas(); renderRod(); populateAllRespSelects(); break;
       case 'vidrio':
-        buildVPChecklist(); renderVP(); break;
+        buildVPChecklist(); renderVP(); populateAllRespSelects(); break;
       case 'basculas':
-        buildBasList(); renderBas(); renderCalib(); break;
+        buildBasList(); renderBas(); renderCalib(); populateAllRespSelects(); break;
       case 'lavado-prod':
-        buildLPTanques(); renderLP(); break;
+        buildLPTanques(); renderLP(); populateAllRespSelects(); break;
       case 'fumigacion':
-        renderFum(); break;
+        renderFum(); populateAllRespSelects(); break;
       case 'capacitacion':
         renderCap(); break;
       case 'empleados-enfermos':
@@ -6174,8 +6181,8 @@ function renderBL(){
 }
 
 function saveFum(){
-  if(!v('fum-resp')){toast('⚠ Ingrese responsable',true);return;}
-  DB.fum.unshift({id:uid(),ts:now(),inst:v('fum-inst'),mes:v('fum-mes'),sem:v('fum-sem'),resp:v('fum-resp'),fecha:v('fum-fecha'),tipo:v('fum-tipo'),res:v('fum-res'),obs:v('fum-obs')});
+  if(!v('fum-resp-sel')){toast('⚠ Ingrese responsable',true);return;}
+  DB.fum.unshift({id:uid(),ts:now(),inst:v('fum-inst'),mes:v('fum-mes'),sem:v('fum-sem'),resp:v('fum-resp-sel'),fecha:v('fum-fecha'),tipo:v('fum-tipo'),res:v('fum-res'),obs:v('fum-obs')});
   save();renderFum();toast('✓ Control de fumigación registrado');
 }
 function renderFum(){
@@ -6796,12 +6803,12 @@ function buildVPChecklist(){
   });
 }
 function saveVP(){
-  if(!v('vp-fecha')||!v('vp-resp')){toast('⚠ Complete fecha y responsable',true);return;}
+  if(!v('vp-fecha')||!v('vp-resp-sel')){toast('⚠ Complete fecha y responsable',true);return;}
   const checks=VP_ITEMS.map((_,i)=>{const r=document.querySelector(`input[name="vp_${i}"]:checked`);return r?r.value:'';});
   const obs=VP_ITEMS.map((_,i)=>document.getElementById(`vp_obs_${i}`)?.value||'');
   const ok=checks.filter(c=>c==='cumple').length;
   const nok=checks.filter(c=>c==='no_cumple').length;
-  DB.vp.unshift({id:uid(),ts:now(),fecha:v('vp-fecha'),mes:v('vp-mes'),resp:v('vp-resp'),checks,obs,ok,nok});
+  DB.vp.unshift({id:uid(),ts:now(),fecha:v('vp-fecha'),mes:v('vp-mes'),resp:v('vp-resp-sel'),checks,obs,ok,nok});
   save();renderVP();toast('✓ Revisión de vidrio y plástico guardada');
 }
 function renderVP(){
