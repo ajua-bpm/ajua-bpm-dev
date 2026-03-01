@@ -730,6 +730,7 @@ tr:hover td{background:var(--green-pale);}
 <div style="font-size:2rem;margin-bottom:6px;">🌿</div>
 <div style="font-family:var(--fh);font-size:1.3rem;font-weight:700;color:var(--acc);">AJÚA</div>
 <div style="font-size:.72rem;color:var(--muted2);margin-top:3px;">Sistema de Control Interno</div>
+<div style="font-size:.62rem;color:var(--muted2);margin-top:4px;opacity:.7;">v 01/03/2026 02:08</div>
 </div>
 <div style="margin-bottom:14px;">
 <label style="font-size:.68rem;color:var(--muted2);display:block;margin-bottom:5px;">Usuario</label>
@@ -1403,6 +1404,17 @@ tr:hover td{background:var(--green-pale);}
 </div>
 </div>
 <div style="border:1px solid var(--br);border-radius:4px;overflow:hidden;margin-bottom:14px;">
+<div style="margin-bottom:10px;">
+  <button onclick="alToggleEmpList()" style="width:100%;background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:var(--fh);font-size:.78rem;font-weight:600;color:var(--tx);">
+    <span>👥 Lista de Personal</span>
+    <span style="display:flex;align-items:center;gap:8px;">
+      <span id="al-emp-counter" style="font-size:.68rem;color:var(--muted2);font-weight:400;"></span>
+      <span id="al-emp-arrow" style="font-size:.7rem;transition:.2s;">▼</span>
+    </span>
+  </button>
+</div>
+<div id="al-emp-wrap" style="display:none;">
+<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
 <table style="width:100%;border-collapse:collapse;">
 <thead>
 <tr style="background:var(--s2);">
@@ -1417,6 +1429,8 @@ tr:hover td{background:var(--green-pale);}
 </thead>
 <tbody id="al-emp-tbody"></tbody>
 </table>
+</div><!-- end overflow -->
+</div><!-- end al-emp-wrap -->
 <div id="al-no-empleados" style="display:none;padding:20px;text-align:center;font-size:.74rem;color:var(--muted2);">
         No hay empleados. <a onclick="show('empleados-db',document.querySelector('.ni[onclick*=empleados-db]'))" style="color:var(--acc);cursor:pointer;">Agrégalos aquí →</a>
 </div>
@@ -3397,6 +3411,7 @@ tr:hover td{background:var(--green-pale);}
 
 
 
+
 <script>
 // ══════════════════════════════════════════════════════════════════
 // FUNCIONES RECONSTRUIDAS — renderAll, renderInvAll, provTab, etc.
@@ -5327,7 +5342,7 @@ function renderTL(){
   const tb=document.getElementById('tl-tbody');if(!tb)return;
   if(!DB.tl.length){tb.innerHTML=`<tr><td colspan="13"><div class="empty">Sin registros</div></td></tr>`;return;}
   const TIPO_MAP={completa:'Completa',exterior:'Solo Exterior',interior:'Solo Interior',desinfeccion:'Desinfección Prof.'};
-  tb.innerHTML=DB.tl.map(r=>`<tr>
+  tb.innerHTML=DB.tl.slice().sort((a,b)=>(b.fecha||b.ts||"").localeCompare(a.fecha||a.ts||"")).map(r=>`<tr>
     <td>${r.fecha}</td><td>${r.resp}</td><td>${r.hora||'—'}</td>
     <td>${r.placa||'—'}</td><td style="font-size:.68rem">${TIPO_MAP[r.tipo]||r.tipo||'—'}</td>
     ${(r.checks||[]).map(c=>chipSN(c)).map(c=>`<td>${c}</td>`).join('')}
@@ -5559,15 +5574,15 @@ function buildDTChecklist(){
   if(!tb||tb.children.length>0)return;
   tb.innerHTML=DT_ITEMS.map((x,i)=>`
     <tr>
-      <td>${x.area}</td>
-      <td style="font-size:.7rem;color:var(--muted2)">${x.crit}</td>
-      <td>
+      <td style="white-space:nowrap;font-weight:600;font-size:.72rem;">${x.area}</td>
+      <td style="font-size:.72rem;color:var(--muted2);white-space:normal;min-width:120px;">${x.crit}</td>
+      <td style="white-space:nowrap;">
         <div class="cl-radio">
           <label><input type="radio" name="dt_${i}" value="si" onchange="dtUpdateResult()"> SI</label>
           <label><input type="radio" name="dt_${i}" value="no" onchange="dtUpdateResult()"> NO</label>
         </div>
       </td>
-      <td><input style="background:var(--s2);border:1.5px solid var(--br);color:var(--txt);padding:4px 7px;border-radius:2px;font-family:var(--fm);font-size:.7rem;width:100%" id="dt_obs_${i}" placeholder="Obs..."></td>
+      <td><input style="background:var(--s2);border:1.5px solid var(--br);color:var(--txt);padding:4px 7px;border-radius:2px;font-family:var(--fm);font-size:.7rem;width:80px;" id="dt_obs_${i}" placeholder="Obs..."></td>
     </tr>`).join('');
 }
 function dtUpdateResult(){
@@ -5666,7 +5681,7 @@ function renderDT(){
   const tb=document.getElementById('dt-tbody');if(!tb)return;
   if(!DB.dt.length){tb.innerHTML=`<tr><td colspan="11"><div class="empty">Sin inspecciones</div></td></tr>`;return;}
   const AUTH={si:'<span class="chip ck">AUTORIZADO</span>',condicional:'<span class="chip cw">CONDICIONAL</span>',no:'<span class="chip cr">RECHAZADO</span>'};
-  tb.innerHTML=DB.dt.map(r=>{
+  tb.innerHTML=DB.dt.slice().sort((a,b)=>(b.fecha||b.ts||"").localeCompare(a.fecha||a.ts||"")).map(r=>{
     const pct=r.pct??Math.round((r.ok/r.total)*100);
     const c=pct>=80?'ck':pct>=60?'cw':'cr';
     return`<tr>
@@ -5924,7 +5939,7 @@ function saveBL(){
 function renderBL(){
   const tb=document.getElementById('bl-tbody');if(!tb)return;
   if(!DB.bl.length){tb.innerHTML=`<tr><td colspan="8"><div class="empty">Sin registros</div></td></tr>`;return;}
-  tb.innerHTML=DB.bl.map(r=>`<tr>
+  tb.innerHTML=DB.bl.slice().sort((a,b)=>(b.fecha||b.ts||"").localeCompare(a.fecha||a.ts||"")).map(r=>`<tr>
     <td>${r.fecha}</td><td>${r.resp}</td><td>${r.hora||'—'}</td>
     <td style="color:var(--acc)">${r.si}</td>
     <td style="color:var(--danger)">${r.no}</td>
@@ -5942,7 +5957,7 @@ function saveFum(){
 function renderFum(){
   const tb=document.getElementById('fum-tbody');if(!tb)return;
   if(!DB.fum.length){tb.innerHTML=`<tr><td colspan="9"><div class="empty">Sin registros</div></td></tr>`;return;}
-  tb.innerHTML=DB.fum.map(r=>`<tr>
+  tb.innerHTML=DB.fum.slice().sort((a,b)=>(b.fecha||b.ts||"").localeCompare(a.fecha||a.ts||"")).map(r=>`<tr>
     <td>${r.inst}</td><td>${r.mes}</td><td>Sem. ${r.sem}</td><td>${r.resp}</td><td>${r.fecha||'—'}</td>
     <td>${r.tipo}</td><td>${chipSN(r.res)}</td>
     <td style="font-size:.68rem">${r.obs||'—'}</td>
@@ -5970,26 +5985,26 @@ function buildRodTrampas() {
     const color = t.nivel === 1 ? 'var(--acc2)' : 'var(--info)';
     const row = document.createElement('div');
     row.id = `rod-row-${t.id}`;
-    row.style.cssText = `display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--s2);border-radius:4px;border:1.5px solid transparent;transition:all .15s;gap:12px;`;
+    row.style.cssText = `display:flex;flex-direction:column;padding:10px 12px;background:var(--s2);border-radius:8px;border:1.5px solid transparent;transition:all .15s;gap:8px;`;
     row.innerHTML = `
-      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+      <div style="display:flex;align-items:center;gap:10px;">
         <div style="width:28px;height:28px;border-radius:4px;background:${color}1a;border:1.5px solid ${color}44;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:${color};flex-shrink:0;">${t.id}</div>
         <div>
-          <div style="font-size:.8rem;font-weight:500;">${t.label}</div>
-          <div style="font-size:.66rem;color:var(--muted2);">📍 ${t.ubicacion}</div>
+          <div style="font-size:.82rem;font-weight:600;">${t.label}</div>
+          <div style="font-size:.65rem;color:var(--muted2);">📍 ${t.ubicacion}</div>
         </div>
       </div>
-      <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
-        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:.72rem;padding:5px 10px;border:1.5px solid var(--br);border-radius:4px;transition:.15s;" id="rod-lbl-rev-${t.id}">
-          <input type="checkbox" id="rod-rev-${t.id}" onchange="rodUpdate(${t.id})" style="accent-color:var(--acc);width:14px;height:14px;"> Revisada
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.74rem;padding:7px 12px;border:1.5px solid var(--br);border-radius:6px;transition:.15s;flex:1;min-width:90px;justify-content:center;" id="rod-lbl-rev-${t.id}">
+          <input type="checkbox" id="rod-rev-${t.id}" onchange="rodUpdate(${t.id})" style="accent-color:var(--acc);width:16px;height:16px;"> Revisada
         </label>
-        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:.72rem;padding:5px 10px;border:1.5px solid var(--br);border-radius:4px;transition:.15s;" id="rod-lbl-lugar-${t.id}">
-          <input type="checkbox" id="rod-lugar-${t.id}" onchange="rodUpdate(${t.id})" style="accent-color:var(--acc);width:14px;height:14px;"> En lugar
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.74rem;padding:7px 12px;border:1.5px solid var(--br);border-radius:6px;transition:.15s;flex:1;min-width:90px;justify-content:center;" id="rod-lbl-lugar-${t.id}">
+          <input type="checkbox" id="rod-lugar-${t.id}" onchange="rodUpdate(${t.id})" style="accent-color:var(--acc);width:16px;height:16px;"> En lugar
         </label>
-        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:.72rem;padding:5px 10px;border:1.5px solid var(--br);border-radius:4px;transition:.15s;" id="rod-lbl-nov-${t.id}">
-          <input type="checkbox" id="rod-nov-${t.id}" onchange="rodUpdate(${t.id})" style="accent-color:var(--warn);width:14px;height:14px;"> Con novedad
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.74rem;padding:7px 12px;border:1.5px solid var(--br);border-radius:6px;transition:.15s;flex:1;min-width:90px;justify-content:center;" id="rod-lbl-nov-${t.id}">
+          <input type="checkbox" id="rod-nov-${t.id}" onchange="rodUpdate(${t.id})" style="accent-color:var(--warn);width:16px;height:16px;"> Con novedad
         </label>
-        <input id="rod-nota-${t.id}" placeholder="Nota..." style="background:var(--s3);border:1.5px solid var(--br);color:var(--txt);padding:5px 8px;border-radius:4px;font-family:var(--fm);font-size:.7rem;width:110px;display:none;">
+        <input id="rod-nota-${t.id}" placeholder="Nota..." style="background:var(--s3);border:1.5px solid var(--br);color:var(--txt);padding:7px 10px;border-radius:6px;font-family:var(--fm);font-size:.74rem;width:100%;display:none;">
       </div>`;
     container.appendChild(row);
   });
@@ -6096,7 +6111,7 @@ function renderRod() {
     alerta:  '<span class="chip cw">⚠ ALERTA</span>',
     parcial: '<span class="chip cb">PARCIAL</span>',
   };
-  tb.innerHTML = DB.rod.map(r => `<tr>
+  tb.innerHTML = DB.rod.slice().sort((a,b)=>(b.fecha||b.ts||"").localeCompare(a.fecha||a.ts||"")).map(r => `<tr>
     <td>${r.fecha}</td>
     <td>${r.hora || '—'}</td>
     <td>${r.resp}</td>
@@ -6224,7 +6239,7 @@ function saveCap() {
 function renderCap() {
   const tb = document.getElementById('cap-tbody'); if (!tb) return;
   if (!DB.cap.length) { tb.innerHTML = `<tr><td colspan="8"><div class="empty">Sin capacitaciones registradas</div></td></tr>`; return; }
-  tb.innerHTML = DB.cap.map(r => `<tr>
+  tb.innerHTML = DB.cap.slice().sort((a,b)=>(b.fecha||b.ts||"").localeCompare(a.fecha||a.ts||"")).map(r => `<tr>
     <td>${r.fecha}</td>
     <td>${r.prof}</td>
     <td><span class="chip cb" style="font-size:.6rem;">${r.tipo || '—'}</span></td>
@@ -6306,7 +6321,7 @@ function saveEE() {
 function renderEE() {
   const tb = document.getElementById('ee-tbody'); if (!tb) return;
   if (!DB.ee.length) { tb.innerHTML = `<tr><td colspan="9"><div class="empty">Sin registros</div></td></tr>`; return; }
-  tb.innerHTML = DB.ee.map(r => `<tr>
+  tb.innerHTML = DB.ee.slice().sort((a,b)=>(b.fecha||b.ts||"").localeCompare(a.fecha||a.ts||"")).map(r => `<tr>
     <td>${r.fecha}</td><td>${r.nombre}</td><td>${r.dpto || '—'}</td>
     <td>${r.diag || '—'}</td><td>${r.ini || '—'}</td><td>${r.fin || '—'}</td>
     <td><strong ${r.dias > 3 ? 'style="color:var(--danger)"' : ''}>${r.dias || 0}</strong></td>
@@ -6317,6 +6332,15 @@ function renderEE() {
 
 const AL_LAVADOS = ['10:00','12:00','14:00','16:00'];
 
+
+function alToggleEmpList() {
+  const wrap  = document.getElementById('al-emp-wrap');
+  const arrow = document.getElementById('al-emp-arrow');
+  if (!wrap) return;
+  const open = wrap.style.display === '';
+  wrap.style.display = open ? 'none' : '';
+  if (arrow) arrow.textContent = open ? '▼' : '▲';
+}
 function alBuildEmpTable() {
   const tbody = document.getElementById('al-emp-tbody');
   const noEmp = document.getElementById('al-no-empleados');
@@ -6437,7 +6461,7 @@ function saveAL() {
 function renderAL() {
   const tb = document.getElementById('al-tbody'); if (!tb) return;
   if (!DB.al.length) { tb.innerHTML = `<tr><td colspan="8"><div class="empty">Sin turnos registrados</div></td></tr>`; return; }
-  tb.innerHTML = DB.al.map(r => {
+  tb.innerHTML = DB.al.slice().sort((a,b)=>(b.fecha||b.ts||"").localeCompare(a.fecha||a.ts||"")).map(r => {
     if (r.empleados) {
       const pct = r.totalEmp > 0 ? Math.round(r.totalCompletos / r.totalEmp * 100) : 0;
       return `<tr>
@@ -6505,7 +6529,7 @@ function saveVis(){
 function renderVis(){
   const tb=document.getElementById('vis-tbody');if(!tb)return;
   if(!DB.vis.length){tb.innerHTML=`<tr><td colspan="10"><div class="empty">Sin visitas registradas</div></td></tr>`;return;}
-  tb.innerHTML=DB.vis.map(r=>`<tr>
+  tb.innerHTML=DB.vis.slice().sort((a,b)=>(b.fecha||b.ts||"").localeCompare(a.fecha||a.ts||"")).map(r=>`<tr>
     <td>${r.fecha}</td><td>${r.nombre}</td><td>${r.empresa||'—'}</td><td>${r.dpi||'—'}</td>
     <td>${r.motivo||'—'}</td><td>${r.area||'—'}</td>
     <td>${r.he||'—'}</td><td>${r.hs||'—'}</td><td>${r.aut||'—'}</td>
@@ -6549,7 +6573,7 @@ function saveVP(){
 function renderVP(){
   const tb=document.getElementById('vp-tbody');if(!tb)return;
   if(!DB.vp.length){tb.innerHTML=`<tr><td colspan="7"><div class="empty">Sin revisiones</div></td></tr>`;return;}
-  tb.innerHTML=DB.vp.map(r=>{
+  tb.innerHTML=DB.vp.slice().sort((a,b)=>(b.fecha||b.ts||"").localeCompare(a.fecha||a.ts||"")).map(r=>{
     const total=r.ok+r.nok;
     const pct=total>0?Math.round(r.ok/total*100):0;
     return`<tr>
@@ -6734,7 +6758,7 @@ function renderBas() {
     alerta:  '<span class="chip cr">⚠ ALERTA</span>',
     parcial: '<span class="chip cw">PARCIAL</span>',
   };
-  tb.innerHTML = DB.bas.map(r => {
+  tb.innerHTML = DB.bas.slice().sort((a,b)=>(b.fecha||b.ts||"").localeCompare(a.fecha||a.ts||"")).map(r => {
     if (r.basculas) {
       const cols = r.basculas.map(b => {
         if (!b.resultado) return '<td>—</td>';
@@ -7016,7 +7040,7 @@ function renderLP() {
   const TRAT_COLOR = { cloro:'cb', perox:'cw', cera:'', agua:'ck' };
   const TRAT_ICON  = { cloro:'💧', perox:'🧪', cera:'🫧', agua:'💦' };
 
-  tb.innerHTML = DB.lp.map(r => {
+  tb.innerHTML = DB.lp.slice().sort((a,b)=>(b.fecha||b.ts||"").localeCompare(a.fecha||a.ts||"")).map(r => {
     if (r.tanques) {
       const cols = r.tanques.map(t => {
         if (!t.realizado) return `<td><span style="font-size:.65rem;color:var(--muted2);">—</span></td>`;
