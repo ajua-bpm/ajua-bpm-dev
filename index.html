@@ -2,7 +2,20 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#002619">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AJÚA BPM">
+
+  <!-- Iconos -->
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <title>BPM · AGROINDUSTRIA AJÚA</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -170,6 +183,7 @@ nav::-webkit-scrollbar-thumb{background:rgba(253,252,235,.2);border-radius:2px;}
 main{
   overflow-y:auto;
   padding:24px 28px;
+  padding-bottom:calc(24px + env(safe-area-inset-bottom));
   background:var(--bg);
 }
 main::-webkit-scrollbar{width:6px;}
@@ -3415,6 +3429,20 @@ tr:hover td{background:var(--green-pale);}
 
 
 <script>
+
+// ── PWA Install ───────────────────────────────────────────────────
+function installPWA() {
+  if (window.deferredPrompt) {
+    window.deferredPrompt.prompt();
+    window.deferredPrompt.userChoice.then(result => {
+      if (result.outcome === 'accepted') {
+        toast('✅ App instalada correctamente');
+      }
+      window.deferredPrompt = null;
+    });
+  }
+}
+
 // ══════════════════════════════════════════════════════════════════
 // FUNCIONES RECONSTRUIDAS — renderAll, renderInvAll, provTab, etc.
 // ══════════════════════════════════════════════════════════════════
@@ -11399,11 +11427,32 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </script>
 <script>
-    if ('serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js')
-        .then(() => console.log('SW registered'))
-        .catch(e => console.log('SW error', e));
-    }
+        .then(reg => {
+          console.log('SW registered, scope:', reg.scope);
+          // Check for updates every 60 min
+          setInterval(() => reg.update(), 60 * 60 * 1000);
+        })
+        .catch(e => console.warn('SW error:', e));
+    });
+  }
+
+  // Show install prompt on Android
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const btn = document.getElementById('pwa-install-btn');
+    if (btn) btn.style.display = 'flex';
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    const btn = document.getElementById('pwa-install-btn');
+    if (btn) btn.style.display = 'none';
+  });
   </script>
 </body>
 </html>
