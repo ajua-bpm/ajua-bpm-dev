@@ -703,6 +703,45 @@ tr:hover td{background:var(--green-pale);}
   .hamburger{display:none;}
   .nav-overlay{display:none!important;}
 }
+
+/* ─── CHECKLIST MOBILE-FIRST ──────────────────────── */
+.cl-list { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+.cl-item {
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  background:var(--s2);
+  border:1.5px solid var(--br);
+  border-radius:8px;
+  transition:border-color .15s;
+}
+.cl-item.si  { border-color:var(--acc); background:var(--acc)0d; }
+.cl-item.no  { border-color:var(--danger); background:var(--danger)0d; }
+.cl-item.na  { border-color:var(--muted2); }
+.cl-item-txt { }
+.cl-item-cat { font-size:.58rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted2); margin-bottom:2px; }
+.cl-item-name{ font-size:.78rem; font-weight:500; color:var(--tx); }
+.cl-btns     { display:flex; gap:5px; flex-shrink:0; }
+.cl-btn {
+  width:42px; height:32px;
+  border:1.5px solid var(--br);
+  border-radius:6px;
+  background:transparent;
+  font-size:.65rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .12s;
+  color:var(--muted2);
+}
+.cl-btn.active-si { background:var(--acc); border-color:var(--acc); color:#fff; }
+.cl-btn.active-no { background:var(--danger); border-color:var(--danger); color:#fff; }
+.cl-btn.active-na { background:var(--muted2); border-color:var(--muted2); color:#fff; }
+.cl-cat-header {
+  font-size:.6rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--acc2); padding:6px 4px 3px; margin-top:6px; border-top:1px solid var(--br);
+}
 </style>
 
   <!-- PWA -->
@@ -744,7 +783,7 @@ tr:hover td{background:var(--green-pale);}
 <div style="font-size:2rem;margin-bottom:6px;">🌿</div>
 <div style="font-family:var(--fh);font-size:1.3rem;font-weight:700;color:var(--acc);">AJÚA</div>
 <div style="font-size:.72rem;color:var(--muted2);margin-top:3px;">Sistema de Control Interno</div>
-<div style="font-size:.62rem;color:var(--muted2);margin-top:4px;opacity:.7;">v 01/03/2026 02:08</div>
+<div style="font-size:.62rem;color:var(--muted2);margin-top:4px;opacity:.7;">v 01/03/2026 04:31</div>
 </div>
 <div style="margin-bottom:14px;">
 <label style="font-size:.68rem;color:var(--muted2);display:block;margin-bottom:5px;">Usuario</label>
@@ -901,14 +940,7 @@ tr:hover td{background:var(--green-pale);}
 </div>
 </div>
 <p style="font-size:.68rem;color:var(--muted2);margin-bottom:10px;">Marcar SI / NO para cada elemento:</p>
-<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table class="cl-table" style="margin-bottom:14px;">
-<thead><tr>
-<th style="text-align:left;width:160px">Área</th>
-<th style="text-align:left">Elemento</th>
-<th width="120">Cumple</th>
-</tr></thead>
-<tbody id="tl-checklist"></tbody>
-</table>
+<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div id="tl-checklist" style="margin-bottom:14px;"></div>
 <div style="border:1px solid var(--br);border-radius:4px;padding:14px;margin-bottom:12px;background:var(--s2);">
 <div style="font-family:var(--fh);font-size:.78rem;font-weight:600;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
         📷 Evidencia Fotográfica <span id="tl-photo-badge" style="font-family:var(--fm);font-size:.65rem;color:var(--muted2);">0 fotos</span>
@@ -1008,10 +1040,7 @@ tr:hover td{background:var(--green-pale);}
 </div>
 <div class="fg"><label>Temperatura de Carga (°C)</label><input type="number" id="dt-temp" placeholder="Ej. 4" step="0.1"></div>
 </div>
-<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table class="cl-table" style="margin-bottom:14px;">
-<thead><tr><th style="text-align:left">Área</th><th style="text-align:left;width:300px">Criterio de Control</th><th>¿Cumple?</th><th style="text-align:left;width:150px">Observaciones</th></tr></thead>
-<tbody id="dt-checklist"></tbody>
-</table>
+<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div id="dt-checklist" style="margin-bottom:14px;"></div>
 <div id="dt-result" style="display:none;padding:12px 16px;border-radius:4px;margin-bottom:12px;text-align:center;border:2px solid;">
 <div style="font-size:.65rem;color:var(--muted2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;">Resultado de Inspección</div>
 <div id="dt-result-score" style="font-family:var(--fh);font-size:1.8rem;font-weight:700;"></div>
@@ -1163,9 +1192,7 @@ tr:hover td{background:var(--green-pale);}
 </div>
 <div class="fg"><label>Hora Limpieza</label><input type="time" id="bl-hora"></div>
 </div>
-<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table class="cl-table" style="margin-bottom:14px;"><thead><tr>
-<th style="text-align:left">Categoría</th><th style="text-align:left">Elemento</th><th>SI</th><th>NO</th><th>N/A</th>
-</tr></thead><tbody id="bl-checklist"></tbody></table></div>
+<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div id="bl-checklist" style="margin-bottom:14px;"></div></div>
 <div class="fg" style="margin-bottom:12px;"><label>Comentarios y Recomendaciones</label><textarea id="bl-obs" rows="2" placeholder="Observaciones generales..."></textarea></div>
 <div class="fa">
 <button class="btn bp" onclick="saveBL()">Guardar Registro</button>
@@ -1505,10 +1532,7 @@ tr:hover td{background:var(--green-pale);}
 <select id="vp-mes"><option>Enero</option><option>Febrero</option><option>Marzo</option><option>Abril</option><option>Mayo</option><option>Junio</option><option>Julio</option><option>Agosto</option><option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option>Diciembre</option></select>
 </div>
 </div>
-<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table class="cl-table" style="margin-bottom:14px;">
-<thead><tr><th style="text-align:left">Nivel</th><th style="text-align:left">Elemento</th><th>✔ Cumple</th><th>✕ No Cumple</th><th style="text-align:left;width:150px">Observaciones</th></tr></thead>
-<tbody id="vp-checklist"></tbody>
-</table></div>
+<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div id="vp-checklist" style="margin-bottom:14px;"></div></div>
 <div class="fa"><button class="btn bp" onclick="saveVP()">Guardar Revisión</button><button class="btn bo" onclick="printSec('sec-vidrio')">🖨 Imprimir</button></div>
 </div>
 <div class="tw">
@@ -3154,7 +3178,7 @@ tr:hover td{background:var(--green-pale);}
 <div style="font-size:.62rem;color:var(--acc);font-weight:700;letter-spacing:.08em;margin-bottom:8px;">ROLES DEL EMPLEADO (seleccionar todos los que aplican)</div>
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;">
 <label style="display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--br);border-radius:4px;padding:8px 10px;cursor:pointer;font-size:.72rem;">
-<input type="checkbox" id="rol-piloto" style="accent-color:var(--acc);"> 🚛 Piloto / Conductor
+<input type="checkbox" id="rol-piloto" style="accent-color:var(--acc);" onchange="toggleLicFields(this.checked)"> 🚛 Piloto / Conductor
         </label>
 <label style="display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--br);border-radius:4px;padding:8px 10px;cursor:pointer;font-size:.72rem;">
 <input type="checkbox" id="rol-operaciones" style="accent-color:var(--acc);"> 📦 Operaciones / Bodega
@@ -3178,6 +3202,24 @@ tr:hover td{background:var(--green-pale);}
 <input type="checkbox" id="rol-ventas" style="accent-color:var(--acc);"> 💰 Ventas / Despacho
         </label>
 </div>
+</div>
+<!-- Campos de licencia — solo pilotos -->
+<div id="emp-lic-fields" style="display:none;background:var(--s2);border:1px solid var(--acc)44;border-radius:8px;padding:14px;margin-bottom:12px;">
+  <div style="font-size:.68rem;font-weight:700;color:var(--acc);margin-bottom:10px;letter-spacing:.05em;text-transform:uppercase;">🚛 Datos de Licencia de Conducir</div>
+  <div class="fgrid g3">
+    <div class="fg"><label>No. de Licencia</label><input id="emp-lic-num" placeholder="Ej. L-12345678"></div>
+    <div class="fg"><label>Tipo de Licencia</label>
+      <select id="emp-lic-tipo">
+        <option value="">— Seleccionar —</option>
+        <option value="A">Tipo A — Motocicletas</option>
+        <option value="B">Tipo B — Automóviles</option>
+        <option value="C">Tipo C — Camión liviano</option>
+        <option value="E">Tipo E — Transporte pesado</option>
+        <option value="M">Tipo M — Maquinaria</option>
+      </select>
+    </div>
+    <div class="fg"><label>Fecha Vencimiento Licencia</label><input type="date" id="emp-lic-venc"></div>
+  </div>
 </div>
 <div class="fa" style="gap:8px;flex-wrap:wrap;"><button class="btn bp" id="emp-save-btn" onclick="saveEmpleado()">➕ Agregar Empleado</button><button class="btn bo" id="emp-cancel-btn" onclick="cancelEditEmpleado()" style="display:none;">✕ Cancelar</button></div>
 </div>
@@ -3430,6 +3472,11 @@ tr:hover td{background:var(--green-pale);}
 
 <script>
 
+
+
+
+
+
 // ── PWA Install ───────────────────────────────────────────────────
 function installPWA() {
   if (window.deferredPrompt) {
@@ -3470,7 +3517,15 @@ function renderAll() {
   try { renderProveedores(); } catch(e) {}
   try { renderClientes(); }   catch(e) {}
   try { renderConductores(); } catch(e) {}
+  try { populateAllRespSelects(); } catch(e) {}
+  try { alBuildEmpTable(); }  catch(e) {}
+  try { capBuildAsistentesList(); } catch(e) {}
+  try { eePopulateSelect(); } catch(e) {}
   try { updateDash(); }       catch(e) {}
+  try { populateAllRespSelects(); } catch(e) {}
+  try { alBuildEmpTable(); }  catch(e) {}
+  try { capBuildAsistentesList(); } catch(e) {}
+  try { eePopulateSelect(); } catch(e) {}
 }
 
 function renderInvAll() {
@@ -5147,8 +5202,11 @@ async function initFirebase(firebaseConfig) {
           if (id === 'usuarios') try { renderUsuarios(); } catch(e) {}
         }
       } catch(e) {}
+      try { populateAllRespSelects(); } catch(e) {}
+      try { alBuildEmpTable(); } catch(e) {}
+      try { capBuildAsistentesList(); } catch(e) {}
+      try { eePopulateSelect(); } catch(e) {}
       fbShowStatus('online');
-      // Re-run auth ensure after Firebase data loads
       setTimeout(() => { try { authEnsureDB(); } catch(e) {} }, 500);
     });
 
@@ -5298,19 +5356,60 @@ const TL_ITEMS=[
   {cat:'INTERIOR',item:'Cabina'},
 ];
 let tlStream=null,tlFacing='environment',tlPhotos=[];
+
+function clBtn(el, name, val, rowId) {
+  // Toggle radio logic
+  const row = document.getElementById(rowId);
+  const btns = el.closest('.cl-btns').querySelectorAll('.cl-btn');
+  btns.forEach(b => b.classList.remove('active-si','active-no','active-na'));
+  const cls = val==='si'||val==='cumple' ? 'active-si' : val==='no'||val==='mal' ? 'active-no' : 'active-na';
+  el.classList.add(cls);
+  // Set hidden radio for save compatibility
+  let radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
+  if (!radio) {
+    // Create hidden radios if they don't exist
+    const existing = document.querySelectorAll(`input[name="${name}"]`);
+    existing.forEach(r=>r.remove());
+    ['si','no','na','cumple','mal'].forEach(v=>{
+      const r=document.createElement('input');
+      r.type='radio';r.name=name;r.value=v;r.style.display='none';
+      document.body.appendChild(r);
+    });
+    radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
+  }
+  if (radio) radio.checked = true;
+  // Update row color
+  if (row) {
+    row.classList.remove('si','no','na');
+    if (val==='si'||val==='cumple') row.classList.add('si');
+    else if (val==='no'||val==='mal') row.classList.add('no');
+    else row.classList.add('na');
+  }
+}
 function buildTLChecklist(){
   const tb=document.getElementById('tl-checklist');
-  if(!tb||tb.children.length>0)return;
-  tb.innerHTML=TL_ITEMS.map((x,i)=>`
-    <tr>
-      <td>${x.cat}</td><td>${x.item}</td>
-      <td>
-        <div class="cl-radio">
-          <label><input type="radio" name="tl_${i}" value="si"> SI</label>
-          <label><input type="radio" name="tl_${i}" value="no"> NO</label>
-        </div>
-      </td>
-    </tr>`).join('');
+  if(!tb||tb.dataset.built)return;
+  tb.dataset.built='1';
+  tb.className='cl-list';
+  tb.removeAttribute('style');
+  let lastCat='';
+  TL_ITEMS.forEach((x,i)=>{
+    if(x.cat!==lastCat){
+      lastCat=x.cat;
+      tb.insertAdjacentHTML('beforeend',`<div class="cl-cat-header">${x.cat}</div>`);
+    }
+    tb.insertAdjacentHTML('beforeend',`
+    <div class="cl-item" id="tl-ci-${i}">
+      <div class="cl-item-txt">
+        <div class="cl-item-cat">${x.cat}</div>
+        <div class="cl-item-name">${x.item}</div>
+      </div>
+      <div class="cl-btns">
+        <button class="cl-btn" onclick="clBtn(this,'tl_${i}','si','tl-ci-${i}')">SI</button>
+        <button class="cl-btn" onclick="clBtn(this,'tl_${i}','no','tl-ci-${i}')">NO</button>
+      </div>
+    </div>`);
+  });
 }
 async function tlOpenCam(){
   try{
@@ -5469,31 +5568,78 @@ function saveConductor(){
   toast(`✓ Conductor "${nombre}" agregado`);
 }
 function renderConductores(){
-  const lista=document.getElementById('cond-lista');if(!lista)return;
-  if(!DB.conductores.length){lista.innerHTML=`<div class="empty" style="grid-column:1/-1;">Sin conductores registrados</div>`;return;}
-  const hoy=new Date().toISOString().split('T')[0];
-  lista.innerHTML=DB.conductores.map(c=>{
-    const vencido=c.venc&&c.venc<hoy;
-    const pronto=c.venc&&!vencido&&(new Date(c.venc)-new Date())<30*24*3600*1000;
-    return`<div style="background:var(--s1);border:1.5px solid ${vencido?'var(--danger)':pronto?'var(--warn)':'var(--br)'};border-radius:4px;padding:14px;">
-      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;">
-        <div style="width:52px;height:52px;border-radius:50%;background:var(--s2);border:2px solid var(--acc);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">
-          ${c.foto?`<img src="${c.foto}" style="width:100%;height:100%;object-fit:cover;">`:'👤'}
+  const lista = document.getElementById('cond-lista');
+  if (!lista) return;
+
+  const hoy = new Date(Date.now()-6*60*60*1000).toISOString().split('T')[0];
+
+  // Pilotos desde DB.empleados
+  const empPilotos = (DB.empleados||[])
+    .filter(e => e.estado==='activo' && (e.roles||[]).includes('piloto'))
+    .sort((a,b)=>a.nombre.localeCompare(b.nombre));
+
+  // Conductores legacy
+  const legacyConds = (DB.conductores||[]);
+
+  if (!empPilotos.length && !legacyConds.length) {
+    lista.innerHTML = `<div class="empty" style="grid-column:1/-1;">Sin conductores/pilotos registrados.<br><small>Agrega empleados con rol Piloto en Base de Empleados.</small></div>`;
+    return;
+  }
+
+  const empCards = empPilotos.map(e => {
+    const vencido = e.lic_venc && e.lic_venc < hoy;
+    const pronto  = e.lic_venc && !vencido && (new Date(e.lic_venc)-new Date(hoy)) < 30*86400000;
+    const badge   = vencido ? `<span style="color:var(--danger);font-size:.6rem;font-weight:700;">⚠ LIC VENCIDA</span>`
+                  : pronto  ? `<span style="color:var(--orange);font-size:.6rem;font-weight:700;">⏰ Vence pronto</span>`
+                  : e.lic_venc ? `<span style="color:var(--acc);font-size:.6rem;">✓ Vigente</span>` : '';
+    return `<div style="background:var(--s2);border:1.5px solid ${vencido?'var(--danger)':pronto?'var(--orange)':'var(--br)'};border-radius:8px;padding:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div>
+          <div style="font-weight:700;font-size:.82rem;">🚛 ${e.nombre}</div>
+          <div style="font-size:.68rem;color:var(--muted2);">${e.cargo||'Piloto'}</div>
         </div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-family:var(--fh);font-size:.85rem;font-weight:600;">${c.nombre}</div>
-          <div style="font-size:.7rem;color:var(--muted2);margin-top:2px;">Lic: ${c.lic} · ${c.tipoLic?.split('—')[0]||''}</div>
-          ${c.tel?`<div style="font-size:.7rem;color:var(--muted2);">${c.tel}</div>`:''}
-        </div>
+        ${badge}
       </div>
-      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
-        ${c.venc?`<span class="chip ${vencido?'cr':pronto?'cw':'ck'}" style="font-size:.6rem;">${vencido?'⚠ VENCIDA':'✓ VIGENTE'} · ${c.venc}</span>`:''}
-        ${c.dpi?`<span class="chip cb" style="font-size:.58rem;">DPI: ${c.dpi}</span>`:''}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.7rem;">
+        <div><span style="color:var(--muted2);">Licencia:</span> <b>${e.lic_num||'—'}</b></div>
+        <div><span style="color:var(--muted2);">Tipo:</span> <b>${e.lic_tipo||'—'}</b></div>
+        <div><span style="color:var(--muted2);">Vence:</span> <b>${e.lic_venc||'—'}</b></div>
+        <div><span style="color:var(--muted2);">Tel:</span> <b>${e.tel||'—'}</b></div>
       </div>
-      ${c.licFoto?`<img src="${c.licFoto}" style="width:100%;height:56px;object-fit:cover;border-radius:3px;border:1.5px solid var(--br);margin-bottom:8px;">`:''}
-      <button class="btn bo bsm" style="border-color:var(--danger);color:var(--danger);font-size:.62rem;" onclick="delConductor('${c.id}')">✕ Eliminar</button>
+      <div style="margin-top:8px;display:flex;gap:6px;">
+        <span style="font-size:.6rem;background:var(--acc)22;color:var(--acc);padding:2px 7px;border-radius:4px;border:1px solid var(--acc)44;">Empleado</span>
+      </div>
     </div>`;
   }).join('');
+
+  const legacyCards = legacyConds.map(c => {
+    const vencido = c.venc && c.venc < hoy;
+    const pronto  = c.venc && !vencido && (new Date(c.venc)-new Date(hoy)) < 30*86400000;
+    const badge   = vencido ? `<span style="color:var(--danger);font-size:.6rem;font-weight:700;">⚠ VENCIDA</span>`
+                  : pronto  ? `<span style="color:var(--orange);font-size:.6rem;">⏰ Pronto</span>` : '';
+    return `<div style="background:var(--s2);border:1.5px solid ${vencido?'var(--danger)':pronto?'var(--orange)':'var(--br)'};border-radius:8px;padding:14px;opacity:.85;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div>
+          <div style="font-weight:700;font-size:.82rem;">🚛 ${c.nombre}</div>
+          <div style="font-size:.68rem;color:var(--muted2);">Conductor externo</div>
+        </div>
+        ${badge}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.7rem;">
+        <div><span style="color:var(--muted2);">Licencia:</span> <b>${c.lic}</b></div>
+        <div><span style="color:var(--muted2);">Tipo:</span> <b>${c.tipo||'—'}</b></div>
+        <div><span style="color:var(--muted2);">Vence:</span> <b>${c.venc||'—'}</b></div>
+        <div><span style="color:var(--muted2);">Tel:</span> <b>${c.tel||'—'}</b></div>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:6px;align-items:center;">
+        <span style="font-size:.6rem;background:var(--muted2)22;color:var(--muted2);padding:2px 7px;border-radius:4px;border:1px solid var(--muted2)44;">Legacy</span>
+        <button class="btn bo bsm" style="font-size:.6rem;padding:3px 8px;border-color:var(--danger);color:var(--danger);" onclick="deleteConductor('${c.id}')">Eliminar</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  lista.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;';
+  lista.innerHTML = empCards + legacyCards;
 }
 function delConductor(id){
   DB.conductores=DB.conductores.filter(c=>c.id!==id);
@@ -5601,19 +5747,29 @@ let dtStream=null,dtFacing='environment',dtPhotos=[];
 
 function buildDTChecklist(){
   const tb=document.getElementById('dt-checklist');
-  if(!tb||tb.children.length>0)return;
-  tb.innerHTML=DT_ITEMS.map((x,i)=>`
-    <tr>
-      <td style="white-space:nowrap;font-weight:600;font-size:.72rem;">${x.area}</td>
-      <td style="font-size:.72rem;color:var(--muted2);white-space:normal;min-width:120px;">${x.crit}</td>
-      <td style="white-space:nowrap;">
-        <div class="cl-radio">
-          <label><input type="radio" name="dt_${i}" value="si" onchange="dtUpdateResult()"> SI</label>
-          <label><input type="radio" name="dt_${i}" value="no" onchange="dtUpdateResult()"> NO</label>
-        </div>
-      </td>
-      <td><input style="background:var(--s2);border:1.5px solid var(--br);color:var(--txt);padding:4px 7px;border-radius:2px;font-family:var(--fm);font-size:.7rem;width:80px;" id="dt_obs_${i}" placeholder="Obs..."></td>
-    </tr>`).join('');
+  if(!tb||tb.dataset.built)return;
+  tb.dataset.built='1';
+  tb.className='cl-list';
+  tb.removeAttribute('style');
+  let lastArea='';
+  DT_ITEMS.forEach((x,i)=>{
+    if(x.area!==lastArea){
+      lastArea=x.area;
+      tb.insertAdjacentHTML('beforeend',`<div class="cl-cat-header">${x.area}</div>`);
+    }
+    tb.insertAdjacentHTML('beforeend',`
+    <div class="cl-item" id="dt-ci-${i}">
+      <div class="cl-item-txt">
+        <div class="cl-item-cat">${x.area}</div>
+        <div class="cl-item-name">${x.crit}</div>
+      </div>
+      <div class="cl-btns">
+        <button class="cl-btn" onclick="clBtn(this,'dt_${i}','si','dt-ci-${i}');dtUpdateResult()">SI</button>
+        <button class="cl-btn" onclick="clBtn(this,'dt_${i}','no','dt-ci-${i}');dtUpdateResult()">NO</button>
+        <button class="cl-btn" onclick="clBtn(this,'dt_${i}','na','dt-ci-${i}');dtUpdateResult()">N/A</button>
+      </div>
+    </div>`);
+  });
 }
 function dtUpdateResult(){
   const checks=DT_ITEMS.map((_,i)=>{const r=document.querySelector(`input[name="dt_${i}"]:checked`);return r?r.value:'';});
@@ -5759,6 +5915,15 @@ function editEmpleado(id) {
   if (cb) cb.style.display = '';
   const sb = document.getElementById('emp-save-btn');
   if (sb) sb.textContent = '💾 Guardar Cambios';
+  // Populate licencia fields if piloto
+  const isPiloto = (e.roles||[]).includes('piloto');
+  toggleLicFields(isPiloto);
+  const licNum  = document.getElementById('emp-lic-num');
+  const licTipo = document.getElementById('emp-lic-tipo');
+  const licVenc = document.getElementById('emp-lic-venc');
+  if (licNum)  licNum.value  = e.lic_num  || '';
+  if (licTipo) licTipo.value = e.lic_tipo || '';
+  if (licVenc) licVenc.value = e.lic_venc || '';
   document.getElementById('sec-empleados-db').scrollIntoView({behavior:'smooth'});
 }
 
@@ -5813,23 +5978,38 @@ function saveEmpleado(){
   const ALL_ROLES = ['piloto','operaciones','maquila','resp-limpieza','calidad','supervisor','admin','ventas'];
   const roles = ALL_ROLES.filter(r => document.getElementById('rol-'+r)?.checked);
 
-  DB.empleados.push({
-    id:     uid(),
+  const empData = {
     nombre,
-    dpi:    document.getElementById('emp-dpi')?.value.trim()   || '',
-    tel:    document.getElementById('emp-tel')?.value.trim()   || '',
-    cargo:  document.getElementById('emp-cargo')?.value.trim() || '',
-    roles,   // array of roles: ['piloto','operaciones',...]
-    estado: document.getElementById('emp-estado')?.value || 'activo',
-    ts:     now(),
-  });
+    dpi:      document.getElementById('emp-dpi')?.value.trim()      || '',
+    tel:      document.getElementById('emp-tel')?.value.trim()      || '',
+    cargo:    document.getElementById('emp-cargo')?.value.trim()    || '',
+    lic_num:  document.getElementById('emp-lic-num')?.value.trim()  || '',
+    lic_tipo: document.getElementById('emp-lic-tipo')?.value        || '',
+    lic_venc: document.getElementById('emp-lic-venc')?.value        || '',
+    roles,
+    estado:   document.getElementById('emp-estado')?.value         || 'activo',
+  };
 
-  ['emp-nombre','emp-dpi','emp-tel','emp-cargo'].forEach(id => {
+  const editId = document.getElementById('emp-edit-id')?.value;
+  if (editId) {
+    const idx2 = DB.empleados.findIndex(e => e.id === editId);
+    if (idx2 >= 0) Object.assign(DB.empleados[idx2], empData);
+    toast('✓ Empleado "' + nombre + '" actualizado');
+  } else {
+    DB.empleados.push({ id: uid(), ts: now(), ...empData });
+    toast('✓ Empleado "' + nombre + '" agregado');
+  }
+
+  // Reset form
+  ['emp-nombre','emp-dpi','emp-tel','emp-cargo','emp-lic-num','emp-lic-venc'].forEach(id => {
     const e = document.getElementById(id); if (e) e.value = '';
   });
-  ALL_ROLES.forEach(r => {
-    const cb = document.getElementById('rol-'+r); if (cb) cb.checked = false;
-  });
+  const licTipo = document.getElementById('emp-lic-tipo'); if (licTipo) licTipo.value = '';
+  ALL_ROLES.forEach(r => { const cb = document.getElementById('rol-'+r); if (cb) cb.checked = false; });
+  const editIdEl = document.getElementById('emp-edit-id'); if (editIdEl) editIdEl.value = '';
+  const cancelBtn = document.getElementById('emp-cancel-btn'); if (cancelBtn) cancelBtn.style.display = 'none';
+  const saveBtn = document.getElementById('emp-save-btn'); if (saveBtn) saveBtn.textContent = '➕ Agregar Empleado';
+  toggleLicFields(false);
 
   save();
   renderEmpleados();
@@ -5837,7 +6017,6 @@ function saveEmpleado(){
   capBuildAsistentesList();
   eePopulateSelect();
   alBuildEmpTable();
-  toast('✓ Empleado "' + nombre + '" agregado');
 }
 
 function empByRol(rol) {
@@ -5894,7 +6073,7 @@ function populateAllRespSelects(){
     activos.map(e => '<option value="' + e.nombre + '">' + e.nombre + (e.cargo?' · '+e.cargo:'') + '</option>').join('');
 
   const respLimp = empByRol('resp-limpieza').concat(empByRol('supervisor')).concat(empByRol('operaciones'));
-  const respLimpDedupe = respLimp.filter((e,i,a) => a.findIndex(x=>x.id===e.id)===i);
+  const respLimpDedupe = respLimp.filter((e,i,a) => a.findIndex(x=>(x.id&&x.id===e.id)||(x.nombre===e.nombre))===i);
   const optsLimp = '<option value="">— Seleccionar responsable —</option>' +
     (respLimpDedupe.length ? respLimpDedupe : activos).map(e =>
       '<option value="' + e.nombre + '">' + e.nombre + (e.cargo?' · '+e.cargo:'') + '</option>'
@@ -5948,14 +6127,29 @@ const BL_ITEMS=[
 ];
 function buildBLChecklist(){
   const tb=document.getElementById('bl-checklist');
-  if(!tb||tb.children.length>0)return;
-  tb.innerHTML=BL_ITEMS.map((x,i)=>`
-    <tr>
-      <td>${x.cat}</td><td>${x.item}</td>
-      <td style="text-align:center"><input type="radio" name="bl_${i}" value="si" style="accent-color:var(--acc)"></td>
-      <td style="text-align:center"><input type="radio" name="bl_${i}" value="no" style="accent-color:var(--danger)"></td>
-      <td style="text-align:center"><input type="radio" name="bl_${i}" value="na" style="accent-color:var(--muted2)"></td>
-    </tr>`).join('');
+  if(!tb||tb.dataset.built)return;
+  tb.dataset.built='1';
+  tb.className='cl-list';
+  tb.removeAttribute('style');
+  let lastCat='';
+  BL_ITEMS.forEach((x,i)=>{
+    if(x.cat!==lastCat){
+      lastCat=x.cat;
+      tb.insertAdjacentHTML('beforeend',`<div class="cl-cat-header">${x.cat}</div>`);
+    }
+    tb.insertAdjacentHTML('beforeend',`
+    <div class="cl-item" id="bl-ci-${i}">
+      <div class="cl-item-txt">
+        <div class="cl-item-cat">${x.cat}</div>
+        <div class="cl-item-name">${x.item}</div>
+      </div>
+      <div class="cl-btns">
+        <button class="cl-btn" onclick="clBtn(this,'bl_${i}','si','bl-ci-${i}')">SI</button>
+        <button class="cl-btn" onclick="clBtn(this,'bl_${i}','no','bl-ci-${i}')">NO</button>
+        <button class="cl-btn" onclick="clBtn(this,'bl_${i}','na','bl-ci-${i}')">N/A</button>
+      </div>
+    </div>`);
+  });
 }
 function saveBL(){
   if(!v('bl-fecha')||!v('bl-resp')){toast('⚠ Complete fecha y seleccione responsable',true);return;}
@@ -6577,14 +6771,29 @@ const VP_ITEMS=[
 ];
 function buildVPChecklist(){
   const tb=document.getElementById('vp-checklist');
-  if(!tb||tb.children.length>0)return;
-  tb.innerHTML=VP_ITEMS.map((x,i)=>`
-    <tr>
-      <td>${x.nivel}</td><td>${x.item}</td>
-      <td style="text-align:center"><input type="radio" name="vp_${i}" value="cumple" style="accent-color:var(--acc)"></td>
-      <td style="text-align:center"><input type="radio" name="vp_${i}" value="no_cumple" style="accent-color:var(--danger)"></td>
-      <td><input id="vp_obs_${i}" style="background:var(--s2);border:1.5px solid var(--br);color:var(--txt);padding:4px 7px;border-radius:2px;font-family:var(--fm);font-size:.68rem;width:100%" placeholder="Obs."></td>
-    </tr>`).join('');
+  if(!tb||tb.dataset.built)return;
+  tb.dataset.built='1';
+  tb.className='cl-list';
+  tb.removeAttribute('style');
+  let lastNivel='';
+  VP_ITEMS.forEach((x,i)=>{
+    if(x.nivel!==lastNivel){
+      lastNivel=x.nivel;
+      tb.insertAdjacentHTML('beforeend',`<div class="cl-cat-header">${x.nivel}</div>`);
+    }
+    tb.insertAdjacentHTML('beforeend',`
+    <div class="cl-item" id="vp-ci-${i}">
+      <div class="cl-item-txt">
+        <div class="cl-item-cat">${x.nivel}</div>
+        <div class="cl-item-name">${x.item}</div>
+      </div>
+      <div class="cl-btns">
+        <button class="cl-btn" onclick="clBtn(this,'vp_${i}','cumple','vp-ci-${i}')">✓</button>
+        <button class="cl-btn" onclick="clBtn(this,'vp_${i}','mal','vp-ci-${i}')">✗</button>
+        <button class="cl-btn" onclick="clBtn(this,'vp_${i}','na','vp-ci-${i}')">N/A</button>
+      </div>
+    </div>`);
+  });
 }
 function saveVP(){
   if(!v('vp-fecha')||!v('vp-resp')){toast('⚠ Complete fecha y responsable',true);return;}
