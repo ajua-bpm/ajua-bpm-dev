@@ -783,7 +783,7 @@ tr:hover td{background:var(--green-pale);}
 <div style="font-size:2rem;margin-bottom:6px;">🌿</div>
 <div style="font-family:var(--fh);font-size:1.3rem;font-weight:700;color:var(--acc);">AJÚA</div>
 <div style="font-size:.72rem;color:var(--muted2);margin-top:3px;">Sistema de Control Interno</div>
-<div style="font-size:.62rem;color:var(--muted2);margin-top:4px;opacity:.7;">v 01/03/2026 04:46</div>
+<div style="font-size:.62rem;color:var(--muted2);margin-top:4px;opacity:.7;">v 01/03/2026 05:16</div>
 </div>
 <div style="margin-bottom:14px;">
 <label style="font-size:.68rem;color:var(--muted2);display:block;margin-bottom:5px;">Usuario</label>
@@ -1863,9 +1863,9 @@ tr:hover td{background:var(--green-pale);}
 <!-- ══ LISTA ══ -->
 <div id="pw-panel-lista">
   <div class="card" style="padding:14px 18px;">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;">
-      <input id="pw-fil-fecha" type="month" style="background:var(--s2);border:1.5px solid var(--br);color:var(--txt);padding:7px 12px;border-radius:var(--r);font-family:var(--fm);font-size:.82rem;" oninput="pwRenderLista()">
-      <select id="pw-fil-estado" onchange="pwRenderLista()" style="background:var(--s2);border:1.5px solid var(--br);color:var(--txt);padding:7px 12px;border-radius:var(--r);font-family:var(--fm);font-size:.82rem;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      <input id="pw-fil-fecha" type="month" style="background:var(--s2);border:1.5px solid var(--br);color:var(--txt);padding:8px 10px;border-radius:var(--r);font-family:var(--fm);font-size:.82rem;width:100%;box-sizing:border-box;" oninput="pwRenderLista()">
+      <select id="pw-fil-estado" onchange="pwRenderLista()" style="background:var(--s2);border:1.5px solid var(--br);color:var(--txt);padding:8px 10px;border-radius:var(--r);font-family:var(--fm);font-size:.82rem;width:100%;box-sizing:border-box;">
         <option value="">Todos los estados</option>
         <option value="pendiente">⏳ Pendiente</option>
         <option value="en_curso">🚛 En curso</option>
@@ -4904,70 +4904,88 @@ function pwRenderLista() {
   }).sort((a,b) => b.fechaEntrega.localeCompare(a.fechaEntrega));
 
   if (!pedidos.length) {
-    cont.innerHTML = '<div class="empty">Sin pedidos en este período. Haz clic en "+ Nuevo Pedido" para registrar uno.</div>';
+    cont.innerHTML = '<div class="empty">Sin pedidos en este período.</div>';
     return;
   }
 
-  cont.innerHTML = pedidos.map(p => {
-    const est  = PW_ESTADOS[p.estado] || PW_ESTADOS.pendiente;
-    const totalCajas = p.rubros?.reduce((s,r)=>s+r.cajasPedidas,0)||0;
-    const hoy  = new Date().toISOString().split('T')[0];
-    const esHoy = p.fechaEntrega === hoy;
-    const esPasado = p.fechaEntrega < hoy;
-    const urgente  = (p.estado==='pendiente'||p.estado==='en_curso') && (esHoy||esPasado);
+  const hoy = new Date(Date.now()-6*60*60*1000).toISOString().split('T')[0];
 
-    return `<div style="background:var(--s1);border:1.5px solid ${urgente?'var(--orange)':'var(--br)'};border-radius:var(--r2);padding:14px 18px;margin-bottom:10px;${urgente?'box-shadow:0 0 0 2px rgba(242,104,34,.15);':''}transition:all .15s;">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-        <div>
-          <div style="font-family:var(--fh);font-size:1rem;font-weight:800;color:var(--green-deep);">
-            📅 ${pwFechaAmigable(p.fechaEntrega)} ${p.horaEntrega?'· '+p.horaEntrega:''}
-            ${esHoy?'<span style="background:var(--orange);color:#fff;font-size:.62rem;padding:2px 8px;border-radius:10px;margin-left:6px;font-family:var(--fn);">HOY</span>':''}
-            ${p.esAgregado?'<span style="background:var(--green-pale);color:var(--green-deep);font-size:.62rem;padding:2px 8px;border-radius:10px;margin-left:4px;font-family:var(--fn);border:1px solid var(--br);">AGREGADO</span>':''}
+  cont.innerHTML = pedidos.map(p => {
+    const est        = PW_ESTADOS[p.estado] || PW_ESTADOS.pendiente;
+    const totalCajas = p.rubros?.reduce((s,r)=>s+r.cajasPedidas,0) || 0;
+    const totAcep    = p.rubros?.reduce((s,r)=>s+(r.cajasAceptadas||0),0) || 0;
+    const totRech    = p.rubros?.reduce((s,r)=>s+(r.cajasRechazadas||0),0) || 0;
+    const esHoy      = p.fechaEntrega === hoy;
+    const esPasado   = p.fechaEntrega < hoy;
+    const urgente    = (p.estado==='pendiente'||p.estado==='en_curso') && (esHoy||esPasado);
+
+    // Mobile-first rubros: use vertical cards instead of wide table
+    const rubrosHTML = (p.rubros||[]).map((r,ri) => {
+      const eA = r.estado==='aceptado', eP=r.estado==='parcial', eR=r.estado==='rechazado';
+      const borde = eA?'var(--acc)':eP?'var(--orange)':eR?'var(--danger)':'var(--br)';
+      const stateLabel = !r.estado||r.estado==='pendiente' ? '—'
+        : eA ? '✅ Aceptado' : eP ? '⚠️ Parcial' : '❌ Rechazo';
+      return `<div style="border-left:3px solid ${borde};padding:6px 10px;margin-bottom:5px;background:${eA?'rgba(0,122,82,.04)':eR?'rgba(214,48,48,.04)':'var(--s2)'};border-radius:0 6px 6px 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;">
+          <div>
+            ${r.item?`<span style="font-size:.62rem;color:var(--muted2);margin-right:4px;">${r.item}</span>`:''}
+            <span style="font-size:.78rem;font-weight:600;">${r.descripcion}</span>
           </div>
-          <div style="font-size:.75rem;color:var(--muted);margin-top:3px;font-family:var(--fn);">
-            ${p.oc?'OC: <strong>'+p.oc+'</strong> · ':''}Rampa: <strong>${p.rampa||'—'}</strong> · ${totalCajas} cajas
-            ${p.nota?'<span style="color:var(--orange-deep);font-weight:600;"> · '+p.nota+'</span>':''}
+          <span style="font-size:.65rem;color:${eA?'var(--acc)':eR?'var(--danger)':'var(--muted2)'};">${stateLabel}</span>
+        </div>
+        <div style="display:flex;gap:14px;margin-top:4px;font-size:.72rem;">
+          <span style="color:var(--muted2);">Pedido: <strong style="color:var(--tx);">${r.cajasPedidas}</strong></span>
+          ${r.cajasAceptadas!=null?`<span style="color:var(--muted2);">Acept: <strong style="color:var(--acc);">${r.cajasAceptadas}</strong></span>`:''}
+          ${r.cajasRechazadas>0?`<span style="color:var(--muted2);">Rech: <strong style="color:var(--danger);">${r.cajasRechazadas}</strong></span>`:''}
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div style="background:var(--s1);border:1.5px solid ${urgente?'var(--orange)':'var(--br)'};
+      border-radius:10px;padding:14px;margin-bottom:12px;
+      ${urgente?'box-shadow:0 0 0 3px rgba(242,104,34,.12);':''}">
+
+      <!-- Header row -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:var(--fh);font-size:.95rem;font-weight:800;color:var(--green-deep);line-height:1.2;">
+            📅 ${pwFechaAmigable(p.fechaEntrega)}
+            ${p.horaEntrega?`<span style="font-size:.78rem;font-weight:600;"> · ${p.horaEntrega}</span>`:''}
+            ${esHoy?'<span style="background:var(--orange);color:#fff;font-size:.58rem;padding:2px 7px;border-radius:10px;margin-left:6px;font-family:var(--fn);vertical-align:middle;">HOY</span>':''}
+          </div>
+          <div style="font-size:.72rem;color:var(--muted2);margin-top:3px;font-family:var(--fn);">
+            Rampa: <strong>${p.rampa||'—'}</strong> · <strong>${totalCajas}</strong> cajas
+            ${p.oc?` · OC: <strong>${p.oc}</strong>`:''}
+            ${p.nota?`<div style="color:var(--orange-deep);font-weight:600;margin-top:2px;">📝 ${p.nota}</div>`:''}
           </div>
         </div>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-          <span class="chip" style="background:${est.color}22;color:${est.color};border:1.5px solid ${est.color}44;font-size:.72rem;">${est.icon} ${est.label}</span>
-          <button class="btn bsm bo" onclick="pwEditarPedido('${p.id}')">✏️ Ver / Editar</button>
-          ${(p.estado==='pendiente'||p.estado==='en_curso') ? `<button class="btn bsm" style="background:var(--orange);color:#fff;font-weight:700;" onclick="pwEditarPedido('${p.id}')">🔔 Cerrar día</button>` : ''}
-          <button class="btn bsm bo" onclick="pwNuevoPedido('${p.id}')" title="Agregar pedido nuevo para la misma fecha">+ Agregado</button>
-        </div>
+        <span style="background:${est.color}22;color:${est.color};border:1.5px solid ${est.color}44;
+          font-size:.7rem;font-family:var(--fn);font-weight:700;padding:3px 9px;border-radius:20px;
+          white-space:nowrap;flex-shrink:0;">
+          ${est.icon} ${est.label}
+        </span>
       </div>
-      <!-- Rubros mini-table -->
-      <div style="overflow-x:auto;">
-        <table style="font-size:.75rem;width:100%;border-collapse:collapse;">
-          <thead><tr style="background:var(--green-pale);">
-            <th style="padding:5px 10px;text-align:left;font-family:var(--fn);font-size:.62rem;color:var(--green-deep);font-weight:700;border-bottom:1.5px solid var(--br);">Ítem</th>
-            <th style="padding:5px 10px;text-align:left;font-family:var(--fn);font-size:.62rem;color:var(--green-deep);font-weight:700;border-bottom:1.5px solid var(--br);">Descripción</th>
-            <th style="padding:5px 10px;text-align:right;font-family:var(--fn);font-size:.62rem;color:var(--green-deep);font-weight:700;border-bottom:1.5px solid var(--br);">Pedido</th>
-            <th style="padding:5px 10px;text-align:right;font-family:var(--fn);font-size:.62rem;color:var(--green-deep);font-weight:700;border-bottom:1.5px solid var(--br);">Aceptado</th>
-            <th style="padding:5px 10px;text-align:right;font-family:var(--fn);font-size:.62rem;color:var(--green-deep);font-weight:700;border-bottom:1.5px solid var(--br);">Rechazo</th>
-            <th style="padding:5px 10px;text-align:center;font-family:var(--fn);font-size:.62rem;color:var(--green-deep);font-weight:700;border-bottom:1.5px solid var(--br);">Estado</th>
-          </tr></thead>
-          <tbody>
-          ${(p.rubros||[]).map(r => {
-            const eA = r.estado==='aceptado', eP=r.estado==='parcial', eR=r.estado==='rechazado';
-            const rowColor = eA?'rgba(0,122,82,.04)':eP?'rgba(242,104,34,.05)':eR?'rgba(214,48,48,.05)':'';
-            const stateChip = !r.estado||r.estado==='pendiente'
-              ? '<span style="color:var(--muted);font-size:.65rem;">—</span>'
-              : eA ? '<span class="chip ck" style="font-size:.6rem;">✅ Aceptado</span>'
-              : eP ? '<span class="chip co" style="font-size:.6rem;">⚠️ Parcial</span>'
-              : '<span class="chip cr" style="font-size:.6rem;">❌ Rechazo</span>';
-            return `<tr style="background:${rowColor};">
-              <td style="padding:6px 10px;border-bottom:1px solid var(--br);color:var(--muted);">${r.item||'—'}</td>
-              <td style="padding:6px 10px;border-bottom:1px solid var(--br);font-weight:600;">${r.descripcion}</td>
-              <td style="padding:6px 10px;border-bottom:1px solid var(--br);text-align:right;font-weight:700;">${r.cajasPedidas}</td>
-              <td style="padding:6px 10px;border-bottom:1px solid var(--br);text-align:right;color:var(--acc);font-weight:700;">${r.cajasAceptadas!=null?r.cajasAceptadas:'—'}</td>
-              <td style="padding:6px 10px;border-bottom:1px solid var(--br);text-align:right;color:var(--danger);font-weight:700;">${r.cajasRechazadas!=null&&r.cajasRechazadas>0?r.cajasRechazadas:'—'}</td>
-              <td style="padding:6px 10px;border-bottom:1px solid var(--br);text-align:center;">${stateChip}</td>
-            </tr>`;
-          }).join('')}
-          </tbody>
-        </table>
+
+      <!-- Summary totals on mobile -->
+      ${totAcep||totRech ? `<div style="display:flex;gap:10px;margin-bottom:8px;font-size:.72rem;font-family:var(--fn);">
+        ${totAcep?`<span style="color:var(--acc);font-weight:700;">✅ ${totAcep} aceptadas</span>`:''}
+        ${totRech?`<span style="color:var(--danger);font-weight:700;">❌ ${totRech} rechazadas</span>`:''}
+      </div>` : ''}
+
+      <!-- Rubros -->
+      <div style="margin-bottom:10px;">${rubrosHTML}</div>
+
+      <!-- Action buttons — full width stacking on mobile -->
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        <button class="btn bsm bo" style="flex:1;min-width:100px;"
+          onclick="pwEditarPedido('${p.id}')">✏️ Ver / Editar</button>
+        ${(p.estado==='pendiente'||p.estado==='en_curso') ?
+          `<button class="btn bsm" style="flex:1;min-width:100px;background:var(--orange);color:#fff;font-weight:700;"
+            onclick="pwEditarPedido('${p.id}')">🔔 Cerrar día</button>` : ''}
+        <button class="btn bsm bo" style="flex:1;min-width:100px;"
+          onclick="pwNuevoPedido('${p.id}')">+ Agregado</button>
       </div>
+
       <!-- Docs badges -->
       ${p.albaranDoc||p.rechazoDoc ? `<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
         ${p.albaranDoc?'<span class="chip ck" style="font-size:.65rem;">📄 Albarán ✓</span>':''}
@@ -4983,53 +5001,84 @@ function pwRenderCalendario() {
   const tit  = document.getElementById('pw-cal-titulo');
   if (!grid || !tit) return;
 
-  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const dias  = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                 'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const dias  = ['L','M','X','J','V','S','D'];
   tit.textContent = meses[pwCalMonth] + ' ' + pwCalYear;
 
   const firstDay = new Date(pwCalYear, pwCalMonth, 1);
   const lastDay  = new Date(pwCalYear, pwCalMonth+1, 0);
-  // Monday-first offset
-  let startDow = firstDay.getDay(); // 0=Sun
+  let startDow = firstDay.getDay();
   startDow = startDow === 0 ? 6 : startDow - 1;
 
-  // Build pedidos index by date
   const byDate = {};
   (DB.pedidosWalmart||[]).forEach(p => {
     if (!byDate[p.fechaEntrega]) byDate[p.fechaEntrega] = [];
     byDate[p.fechaEntrega].push(p);
   });
 
-  const hoy = new Date().toISOString().split('T')[0];
+  const hoy = new Date(Date.now()-6*60*60*1000).toISOString().split('T')[0];
+
   let html = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">';
 
-  // Header
+  // Header — single letter days, compact
   dias.forEach(d => {
-    html += `<div style="background:var(--green-pale);padding:7px 4px;text-align:center;font-family:var(--fn);font-size:.7rem;font-weight:700;color:var(--green-deep);border-radius:var(--r) var(--r) 0 0;">${d}</div>`;
+    html += `<div style="background:var(--green-pale);padding:6px 2px;text-align:center;
+      font-family:var(--fn);font-size:.68rem;font-weight:700;color:var(--green-deep);
+      border-radius:4px 4px 0 0;">${d}</div>`;
   });
 
-  // Empty cells
+  // Empty offset cells
   for (let i=0; i<startDow; i++) {
-    html += '<div style="background:var(--s2);min-height:80px;border-radius:var(--r);"></div>';
+    html += '<div style="background:var(--s2);min-height:56px;border-radius:4px;"></div>';
   }
 
   for (let d=1; d<=lastDay.getDate(); d++) {
-    const dateStr = pwCalYear+'-'+String(pwCalMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    const pedidosDia = byDate[dateStr] || [];
-    const isHoy = dateStr === hoy;
+    const ds = pwCalYear+'-'+String(pwCalMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const pedidos = byDate[ds] || [];
+    const isHoy   = ds === hoy;
+    const hasPed  = pedidos.length > 0;
 
-    html += `<div style="background:${isHoy?'rgba(0,65,45,.06)':'var(--s1)'};border:1.5px solid ${isHoy?'var(--green-light)':'var(--br)'};min-height:80px;border-radius:var(--r);padding:5px 6px;cursor:${pedidosDia.length?'pointer':'default'};" ${pedidosDia.length?`onclick="pwCalDiaClick('${dateStr}')"`:''}>
-      <div style="font-family:var(--fn);font-size:.75rem;font-weight:${isHoy?'800':'600'};color:${isHoy?'var(--green-deep)':'var(--txt2)'};">${d}</div>
-      ${pedidosDia.map(p => {
-        const est = PW_ESTADOS[p.estado]||PW_ESTADOS.pendiente;
-        const color = est.color;
-        return `<div style="background:${color};color:#fff;border-radius:3px;padding:2px 5px;font-size:.6rem;font-family:var(--fn);font-weight:700;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-          ${est.icon} ${p.rubros?.reduce((s,r)=>s+r.cajasPedidas,0)||0} cajas${p.esAgregado?' +':''}
-        </div>`;
-      }).join('')}
+    // Summarize: total cajas across all pedidos that day
+    const totalCajas = pedidos.reduce((s,p)=>s+(p.rubros?.reduce((x,r)=>x+r.cajasPedidas,0)||0),0);
+    // Dominant status color
+    const dominantEst = pedidos.find(p=>p.estado==='con_rechazo')
+      || pedidos.find(p=>p.estado==='en_curso')
+      || pedidos.find(p=>p.estado==='cerrado')
+      || pedidos[0];
+    const estColor = dominantEst ? (PW_ESTADOS[dominantEst.estado]||PW_ESTADOS.pendiente).color : 'transparent';
+
+    html += `<div
+      style="background:${isHoy?'rgba(0,65,45,.07)':'var(--s1)'};
+             border:1.5px solid ${isHoy?'var(--green-light)':hasPed?estColor+'66':'var(--br)'};
+             min-height:56px;border-radius:4px;padding:4px 3px;
+             cursor:${hasPed?'pointer':'default'};
+             transition:all .12s;"
+      ${hasPed?`onclick="pwCalDiaClick('${ds}')" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'"`:''}>
+      <div style="font-family:var(--fn);font-size:.7rem;font-weight:${isHoy?'800':'600'};
+        color:${isHoy?'var(--green-deep)':'var(--txt2)'};">${d}</div>
+      ${hasPed ? `
+        <div style="background:${estColor};color:#fff;border-radius:3px;
+          padding:1px 3px;font-size:.55rem;font-family:var(--fn);font-weight:700;
+          margin-top:2px;line-height:1.3;text-align:center;">
+          ${totalCajas}<br><span style="font-weight:400;font-size:.5rem;">cajas</span>
+        </div>
+        ${pedidos.length > 1 ? `<div style="font-size:.5rem;color:${estColor};text-align:center;font-weight:700;">+${pedidos.length-1}</div>` : ''}
+      ` : ''}
     </div>`;
   }
+
   html += '</div>';
+
+  // Legend below
+  html += `<div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;font-size:.68rem;font-family:var(--fn);">
+    ${Object.entries(PW_ESTADOS).map(([k,v])=>`
+      <span style="display:flex;align-items:center;gap:4px;">
+        <span style="width:10px;height:10px;background:${v.color};border-radius:2px;display:inline-block;flex-shrink:0;"></span>
+        ${v.label}
+      </span>`).join('')}
+  </div>`;
+
   grid.innerHTML = html;
 }
 
