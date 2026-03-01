@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pedidos & Logística — AGRICHAIN PRO</title>
+<link rel="stylesheet" href="design-system.css">
+<style>
+.log-kpis { display: grid; grid-template-columns: repeat(5,1fr); gap: 14px; margin-bottom: 20px; }
+@media(max-width:1050px){ .log-kpis { grid-template-columns: repeat(3,1fr); } }
+@media(max-width:600px)  { .log-kpis { grid-template-columns: repeat(2,1fr); } }
+.lkpi { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--r2); padding: 16px; display: flex; align-items: center; gap: 12px; transition: all .18s; cursor: default; }
+.lkpi:hover { box-shadow: var(--sh2); }
+.lkpi-ico { width: 44px; height: 44px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.lkpi-val { font-family: var(--fh); font-size: 1.55rem; font-weight: 900; color: var(--forest); line-height: 1; }
+.lkpi-lbl { font-size: .71rem; color: var(--text3); font-weight: 500; }
+.lkpi-det { font-size: .64rem; color: var(--textm); }
+
+/* EDI Status bar */
+.edi-bar { display: flex; align-items: center; gap: 10px; background: var(--forest2); border-radius: var(--r2); padding: 10px 16px; margin-bottom: 18px; flex-wrap: wrap; }
+.edi-sys { display: flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(255,255,255,.06); border-radius: var(--r); border: 1px solid rgba(255,255,255,.1); }
+.edi-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; animation: pls2 2s infinite; }
+@keyframes pls2 { 0%,100%{opacity:1}50%{opacity:.4} }
+.dot-on  { background: var(--lime); }
+.dot-off { background: var(--danger); animation: none; }
+.edi-name { font-size: .73rem; font-weight: 600; color: rgba(255,255,255,.7); }
+.edi-lbl  { font-family: var(--fm); font-size: .58rem; color: rgba(255,255,255,.35); }
+
+/* Tabs */
+.log-tabs { display: flex; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--r2); padding: 4px; gap: 3px; margin-bottom: 18px; overflow-x: auto; }
+.ltab { flex: 1; min-width: 100px; padding: 9px 12px; border-radius: var(--r); font-size: .79rem; font-weight: 600; cursor: pointer; transition: all .13s; text-align: center; color: var(--text3); border: none; background: transparent; white-space: nowrap; }
+.ltab:hover { color: var(--text2); }
+.ltab.on { background: var(--jade); color: #fff; }
+
+.tab-pane { display: none; }
+.tab-pane.on { display: block; }
+
+/* Order detail expanded row */
+.order-detail { padding: 16px 20px; background: var(--cream2); border-bottom: 1px solid var(--border); display: none; }
+.order-detail.open { display: block; }
+.od-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 14px; }
+@media(max-width:700px){ .od-grid { grid-template-columns: repeat(2,1fr); } }
+.od-item { }
+.od-label { font-size: .67rem; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+.od-val   { font-size: .83rem; font-weight: 600; color: var(--text); }
+.od-actions { display: flex; gap: 9px; flex-wrap: wrap; }
+
+/* Calendar strip */
+.cal-strip { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 18px; }
+.cal-day { min-width: 60px; padding: 8px 6px; border-radius: var(--r2); border: 1.5px solid var(--border); background: var(--surface); text-align: center; cursor: pointer; transition: all .13s; flex-shrink: 0; }
+.cal-day:hover { border-color: var(--jade); }
+.cal-day.today { border-color: var(--jade); background: rgba(27,115,64,.06); }
+.cal-day.has-orders { position: relative; }
+.cal-day.has-orders::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; background: var(--jade); border-radius: 50%; }
+.cd-dow  { font-size: .58rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
+.cd-num  { font-family: var(--fh); font-size: 1.1rem; font-weight: 700; color: var(--text); }
+.cd-cnt  { font-size: .6rem; color: var(--jade); font-weight: 600; }
+
+/* Driver card */
+.driver-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+@media(max-width:900px){ .driver-grid { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:500px){ .driver-grid { grid-template-columns: 1fr; } }
+.driver-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--r2); padding: 16px; transition: all .18s; }
+.driver-card:hover { box-shadow: var(--sh2); border-color: var(--border2); }
+.dc-header { display: flex; gap: 11px; align-items: center; margin-bottom: 12px; }
+.dc-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.dc-name   { font-size: .85rem; font-weight: 700; color: var(--text); }
+.dc-role   { font-size: .7rem; color: var(--text3); }
+.dc-stats  { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.dc-stat   { text-align: center; padding: 7px; background: var(--cream2); border-radius: 7px; }
+.dc-sv { font-family: var(--fh); font-size: .95rem; font-weight: 700; color: var(--forest); }
+.dc-sl { font-size: .58rem; color: var(--text3); }
+
+/* Route map placeholder */
+.map-placeholder { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border: 1.5px solid var(--border); border-radius: var(--r2); height: 200px; display: flex; align-items: center; justify-content: center; font-size: .9rem; color: var(--jade); font-weight: 600; gap: 8px; cursor: pointer; transition: all .15s; }
+.map-placeholder:hover { box-shadow: var(--sh2); }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="app-sidebar">
+    <div class="sb-header">
+      <div class="sb-logo-row">
+        <div class="sb-logo-icon">🌿</div>
+        <div><div class="sb-app-name">AGRICHAIN PRO</div><div class="sb-app-tag">v2.0 · Multi-empresa</div></div>
+      </div>
+      <div class="sb-tenant">
+        <div class="st-icon" style="background:linear-gradient(135deg,#1B7340,#6FD98A)">🥦</div>
+        <div class="flex flex-col flex-1" style="min-width:0"><span class="st-name">Agroindustria AJÚA</span><span class="st-type">Proveedor Walmart GT · HN</span></div>
+        <span class="st-chev">⌄</span>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <span class="sn-section">Principal</span>
+      <a href="dashboard.html" class="sn-item"><div class="sni-icon">📊</div><span class="sni-label">Dashboard</span></a>
+      <span class="sn-section">Operaciones</span>
+      <a href="modulo-logistica.html" class="sn-item active"><div class="sni-icon">📦</div><div class="flex flex-col"><span class="sni-label">Pedidos & Entregas</span><span class="sni-sub">EDI 850 · ASN 856</span></div><span class="sn-badge sn-badge-amber">7</span></a>
+      <a href="modulo-bpm.html" class="sn-item"><div class="sni-icon">🔬</div><span class="sni-label">Control BPM</span></a>
+      <a href="#" class="sn-item"><div class="sni-icon">🌱</div><span class="sni-label">Productores</span></a>
+      <span class="sn-section">Administración</span>
+      <a href="modulo-finanzas.html" class="sn-item"><div class="sni-icon">💰</div><span class="sni-label">Finanzas</span></a>
+      <a href="#" class="sn-item"><div class="sni-icon">👥</div><span class="sni-label">Empleados</span></a>
+      <a href="modulo-productor.html" class="sn-item"><div class="sni-icon">🌾</div><span class="sni-label">Vista Productor</span></a>
+    </nav>
+    <div class="sb-footer"><div class="sb-user-row"><div class="su-avatar">RS</div><div class="flex flex-col flex-1" style="min-width:0"><span class="su-name">Ricardo Sagastume</span><span class="su-role">Admin · AJÚA</span></div></div></div>
+  </aside>
+
+  <div class="app-main">
+    <div class="app-topbar">
+      <div class="tb-breadcrumb">
+        <a href="dashboard.html" class="bc-item" style="text-decoration:none">Dashboard</a>
+        <span class="bc-sep">›</span>
+        <span class="bc-item bc-active">Pedidos & Logística</span>
+      </div>
+      <div class="tb-actions">
+        <button class="btn btn-outline btn-sm" onclick="syncEDI()">🔄 Sync EDI</button>
+        <button class="btn btn-primary btn-sm" onclick="openModal('newOrderModal')">+ Nueva orden</button>
+        <div class="tb-divider"></div>
+        <div class="tb-user-pill"><div class="tu-avatar">RS</div><div class="flex flex-col"><span class="tu-name">Ricardo S.</span><span class="tu-role">Admin</span></div></div>
+      </div>
+    </div>
+
+    <div class="app-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">📦 Pedidos & Logística</h1>
+          <p class="page-sub">EDI 850 · ASN 856 · Facturación 810 · Confirmación 855 · Rutas y conductores</p>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="log-kpis">
+        <div class="lkpi"><div class="lkpi-ico" style="background:rgba(217,119,6,.1)">⏳</div><div><div class="lkpi-val">7</div><div class="lkpi-lbl">Órdenes pendientes</div><div class="lkpi-det">3 urgentes hoy</div></div></div>
+        <div class="lkpi"><div class="lkpi-ico" style="background:rgba(37,99,235,.1)">🚛</div><div><div class="lkpi-val">3</div><div class="lkpi-lbl">En ruta ahora</div><div class="lkpi-det">GPS activo</div></div></div>
+        <div class="lkpi"><div class="lkpi-ico" style="background:rgba(22,163,74,.1)">✅</div><div><div class="lkpi-val">24</div><div class="lkpi-lbl">Entregadas hoy</div><div class="lkpi-det">98.3% a tiempo</div></div></div>
+        <div class="lkpi"><div class="lkpi-ico" style="background:rgba(220,38,38,.1)">❌</div><div><div class="lkpi-val">1</div><div class="lkpi-lbl">Rechazos</div><div class="lkpi-det">Ver detalle</div></div></div>
+        <div class="lkpi"><div class="lkpi-ico" style="background:rgba(13,148,136,.1)">🧾</div><div><div class="lkpi-val">18</div><div class="lkpi-lbl">ASN enviados</div><div class="lkpi-det">EDI 856 hoy</div></div></div>
+      </div>
+
+      <!-- EDI Systems Status -->
+      <div class="edi-bar">
+        <span style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase">Sistemas EDI:</span>
+        <div class="edi-sys"><div class="edi-dot dot-on"></div><div><div class="edi-name">Walmart EDI</div><div class="edi-lbl">850 · 856 · 855 · 810</div></div></div>
+        <div class="edi-sys"><div class="edi-dot dot-on"></div><div><div class="edi-name">SAP S/4HANA</div><div class="edi-lbl">REST API · IDoc</div></div></div>
+        <div class="edi-sys"><div class="edi-dot dot-on"></div><div><div class="edi-name">SAT FEL GT</div><div class="edi-lbl">Facturación electrónica</div></div></div>
+        <div class="edi-sys"><div class="edi-dot dot-off"></div><div><div class="edi-name">SAR Honduras</div><div class="edi-lbl">Sin conexión</div></div></div>
+        <div class="edi-sys" style="margin-left:auto"><div class="edi-dot dot-on"></div><div><div class="edi-name">Último sync</div><div class="edi-lbl" id="lastSync">Hace 3 min</div></div></div>
+      </div>
+
+      <!-- Calendar strip -->
+      <div class="cal-strip" id="calStrip"></div>
+
+      <!-- Tabs -->
+      <div class="log-tabs">
+        <button class="ltab on" onclick="openLTab('ordenes')" id="ltab-ordenes">📋 Órdenes (34)</button>
+        <button class="ltab" onclick="openLTab('entregas')" id="ltab-entregas">🚛 Entregas activas (3)</button>
+        <button class="ltab" onclick="openLTab('conductores')" id="ltab-conductores">👤 Conductores</button>
+        <button class="ltab" onclick="openLTab('edi')" id="ltab-edi">🔌 Log EDI</button>
+      </div>
+
+      <!-- ORDERS TAB -->
+      <div class="tab-pane on" id="tab-ordenes">
+        <div class="table-panel">
+          <div class="table-header">
+            <div class="filter-row">
+              <button class="fchip active" onclick="filterOrders(this,'all')">Todas</button>
+              <button class="fchip" onclick="filterOrders(this,'pendiente')">⏳ Pendientes</button>
+              <button class="fchip" onclick="filterOrders(this,'en_ruta')">🚛 En ruta</button>
+              <button class="fchip" onclick="filterOrders(this,'entregado')">✅ Entregadas</button>
+              <button class="fchip" onclick="filterOrders(this,'rechazo')">❌ Rechazos</button>
+            </div>
+            <div class="search-wrap">
+              <span class="search-icon">🔍</span>
+              <input class="search-input" placeholder="Buscar orden, tienda…">
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th></th><th>N° Orden</th><th>Tienda</th><th>País</th>
+                <th>Producto</th><th>Cajas</th><th>Entrega</th>
+                <th>Piloto</th><th>EDI</th><th>Estado</th><th>Acciones</th>
+              </tr></thead>
+              <tbody id="ordersTbody"></tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <span class="pag-info">Mostrando 8 de 34 órdenes</span>
+            <div class="pag-btns">
+              <button class="pag-btn active">1</button><button class="pag-btn">2</button>
+              <button class="pag-btn">3</button><button class="pag-btn">›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVE DELIVERIES TAB -->
+      <div class="tab-pane" id="tab-entregas">
+        <div class="form-grid mb-20" style="grid-template-columns:repeat(3,1fr)">
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">🚛 Ruta activa #1</div><span class="chip chip-blue">En ruta</span></div>
+            <div style="margin-bottom:12px">
+              <div style="font-size:.75rem;color:var(--text3)">Piloto</div>
+              <div style="font-weight:700;color:var(--text)">Juan Pérez · Placa P-123ABC</div>
+            </div>
+            <div style="margin-bottom:12px">
+              <div style="font-size:.75rem;color:var(--text3)">Destino</div>
+              <div style="font-weight:700;color:var(--text)">Walmart GT · Zona 12 · Rampa 5002</div>
+            </div>
+            <div style="margin-bottom:14px">
+              <div style="font-size:.75rem;color:var(--text3);margin-bottom:5px">Progreso ruta</div>
+              <div class="progress-wrap"><div class="progress-fill" style="width:65%"></div></div>
+              <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:.68rem;color:var(--textm)"><span>AJÚA Planta</span><span>65%</span><span>Walmart GT</span></div>
+            </div>
+            <div class="map-placeholder" onclick="showToast('🗺️ Abriendo mapa GPS…','warn')">🗺️ Ver en mapa GPS →</div>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button class="btn btn-primary btn-sm w-full" onclick="showToast('✅ Entrega confirmada','success')">✅ Confirmar entrega</button>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">🚛 Ruta activa #2</div><span class="chip chip-blue">En ruta</span></div>
+            <div style="margin-bottom:12px"><div style="font-size:.75rem;color:var(--text3)">Piloto</div><div style="font-weight:700">Carlos López · Placa Q-456DEF</div></div>
+            <div style="margin-bottom:12px"><div style="font-size:.75rem;color:var(--text3)">Destino</div><div style="font-weight:700">La Torre CR · San José · Rampa 8</div></div>
+            <div style="margin-bottom:14px"><div style="font-size:.75rem;color:var(--text3);margin-bottom:5px">Progreso</div><div class="progress-wrap"><div class="progress-fill" style="width:30%"></div></div></div>
+            <div class="map-placeholder" onclick="showToast('🗺️ Abriendo mapa GPS…','warn')">🗺️ Ver en mapa GPS →</div>
+            <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-primary btn-sm w-full" onclick="showToast('✅ Entrega confirmada','success')">✅ Confirmar entrega</button></div>
+          </div>
+          <div class="panel" style="border-style:dashed;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="showToast('➕ Asignando nueva ruta…','warn')">
+            <div style="text-align:center;color:var(--text3)">
+              <div style="font-size:32px;margin-bottom:10px">➕</div>
+              <div style="font-weight:600">Asignar nueva ruta</div>
+              <div style="font-size:.75rem;margin-top:4px">1 conductor disponible</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DRIVERS TAB -->
+      <div class="tab-pane" id="tab-conductores">
+        <div class="driver-grid" id="driverGrid"></div>
+      </div>
+
+      <!-- EDI LOG TAB -->
+      <div class="tab-pane" id="tab-edi">
+        <div class="table-panel">
+          <div class="table-header"><div class="panel-title">🔌 Log de transacciones EDI</div></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Fecha/Hora</th><th>Tipo EDI</th><th>Dirección</th><th>Orden</th><th>Estado</th><th>Mensaje</th></tr></thead>
+            <tbody id="ediLogTbody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- app-content -->
+  </div>
+</div>
+
+<!-- New Order Modal -->
+<div class="modal-overlay" id="newOrderModal" onclick="if(event.target===this)closeModal('newOrderModal')">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-header">
+      <span class="modal-title">📦 Nueva orden de entrega</span>
+      <button class="modal-close" onclick="closeModal('newOrderModal')">✕</button>
+    </div>
+    <div class="form-grid mb-16">
+      <div class="form-group"><label class="form-label">Tienda destino</label>
+        <select class="form-select"><option>Walmart Guatemala · Zona 12</option><option>Walmart Honduras · Tegucigalpa</option><option>La Torre Costa Rica</option><option>Super Selectos El Salvador</option></select></div>
+      <div class="form-group"><label class="form-label">Fecha de entrega</label><input class="form-input" type="date" value="2026-03-05"></div>
+      <div class="form-group"><label class="form-label">Producto / SKU</label><input class="form-input" value="Brócoli fresco · BRC-001" placeholder="Producto…"></div>
+      <div class="form-group"><label class="form-label">Cantidad (cajas)</label><input class="form-input" type="number" value="325"></div>
+      <div class="form-group"><label class="form-label">Piloto asignado</label>
+        <select class="form-select"><option>Juan Pérez — Disponible</option><option>Carlos López — En ruta</option><option>Mario Díaz — Disponible</option></select></div>
+      <div class="form-group"><label class="form-label">Número de rampa</label><input class="form-input" placeholder="Ej: Rampa 5002"></div>
+    </div>
+    <div class="form-group mb-16">
+      <label class="form-label">Observaciones</label>
+      <textarea class="form-textarea" placeholder="Instrucciones especiales para el piloto…"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('newOrderModal')">Cancelar</button>
+      <button class="btn btn-outline" onclick="showToast('📋 ASN 856 generado y enviado','success');closeModal('newOrderModal')">📤 Solo ASN 856</button>
+      <button class="btn btn-primary" onclick="createOrder()">✅ Crear & enviar EDI</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ORDERS = [
+  { id:'OC-2026-0847', tienda:'🛒 Walmart GT', pais:'🇬🇹', prod:'Brócoli fresco', cajas:591, fecha:'01/03/2026', hora:'06:00', piloto:'Juan Pérez', edi:['850','855'], estado:'pendiente' },
+  { id:'OC-2026-0846', tienda:'🛒 Walmart HN', pais:'🇭🇳', prod:'Brócoli fresco', cajas:325, fecha:'02/03/2026', hora:'08:00', piloto:'Carlos López', edi:['850'], estado:'pendiente' },
+  { id:'OC-2026-0845', tienda:'🛒 Walmart HN', pais:'🇭🇳', prod:'Repollo verde', cajas:325, fecha:'28/02/2026', hora:'07:30', piloto:'Juan Pérez', edi:['850','856','810'], estado:'entregado' },
+  { id:'OC-2026-0844', tienda:'🏪 La Torre CR', pais:'🇨🇷', prod:'Brócoli fresco', cajas:218, fecha:'01/03/2026', hora:'10:00', piloto:'Carlos López', edi:['850','856'], estado:'en_ruta' },
+  { id:'OC-2026-0843', tienda:'🏬 Super Selectos', pais:'🇸🇻', prod:'Coliflor', cajas:430, fecha:'27/02/2026', hora:'09:00', piloto:'Mario Díaz', edi:['850','856','855','810'], estado:'entregado' },
+  { id:'OC-2026-0842', tienda:'🛒 Walmart GT', pais:'🇬🇹', prod:'Repollo morado', cajas:280, fecha:'26/02/2026', hora:'06:00', piloto:'Juan Pérez', edi:['850','856','810'], estado:'entregado' },
+  { id:'OC-2026-0841', tienda:'🛒 Walmart GT', pais:'🇬🇹', prod:'Brócoli fresco', cajas:150, fecha:'25/02/2026', hora:'06:00', piloto:'Carlos López', edi:['850','856'], estado:'rechazo' },
+  { id:'OC-2026-0840', tienda:'🏪 La Torre CR', pais:'🇨🇷', prod:'Coliflor', cajas:195, fecha:'25/02/2026', hora:'11:00', piloto:'Mario Díaz', edi:['850','856','855','810'], estado:'entregado' },
+];
+
+const DRIVERS = [
+  { name:'Juan Pérez', initials:'JP', color:'#1B7340', role:'Piloto A · Licencia Tipo B', entregas:24, kmMes:1842, disponible:true },
+  { name:'Carlos López', initials:'CL', color:'#2563EB', role:'Piloto A · Licencia Tipo B', entregas:19, kmMes:1540, disponible:false },
+  { name:'Mario Díaz',   initials:'MD', color:'#D97706', role:'Piloto B · Licencia Tipo A', entregas:15, kmMes:980, disponible:true },
+  { name:'Pedro Lima',   initials:'PL', color:'#6C3FC4', role:'Piloto A · Licencia Tipo B', entregas:21, kmMes:1650, disponible:true },
+  { name:'Luis García',  initials:'LG', color:'#DC2626', role:'Piloto B · Apoyo', entregas:8, kmMes:640, disponible:false },
+  { name:'Ana Morales',  initials:'AM', color:'#0D9488', role:'Supervisora Logística', entregas:0, kmMes:0, disponible:true },
+];
+
+const EDI_LOG = [
+  { ts:'01/03 09:42', tipo:'EDI 850', dir:'↓ Entrada', orden:'OC-2026-0847', estado:'ok',    msg:'PO recibido · 591 cajas · Walmart GT' },
+  { ts:'01/03 09:43', tipo:'EDI 855', dir:'↑ Salida',  orden:'OC-2026-0847', estado:'ok',    msg:'PO Acknowledgement enviado' },
+  { ts:'01/03 07:15', tipo:'EDI 856', dir:'↑ Salida',  orden:'OC-2026-0845', estado:'ok',    msg:'ASN enviado · Camión en ruta' },
+  { ts:'01/03 07:18', tipo:'EDI 810', dir:'↑ Salida',  orden:'OC-2026-0845', estado:'ok',    msg:'Factura electrónica enviada Q12,740' },
+  { ts:'28/02 14:30', tipo:'EDI 850', dir:'↓ Entrada', orden:'OC-2026-0846', estado:'ok',    msg:'PO recibido · 325 cajas · Walmart HN' },
+  { ts:'28/02 11:20', tipo:'EDI 856', dir:'↑ Salida',  orden:'OC-2026-0843', estado:'ok',    msg:'ASN enviado · Confirmado por receptor' },
+  { ts:'27/02 16:05', tipo:'EDI 810', dir:'↑ Salida',  orden:'OC-2026-0843', estado:'error', msg:'Error: NIT no válido en SAR HN' },
+  { ts:'27/02 16:12', tipo:'EDI 810', dir:'↑ Salida',  orden:'OC-2026-0843', estado:'ok',    msg:'Reintento · Enviado correctamente' },
+];
+
+function renderOrders() {
+  document.getElementById('ordersTbody').innerHTML = ORDERS.map((o,i) => {
+    const statusChip = {
+      pendiente: '<span class="chip chip-amber">⏳ Pendiente</span>',
+      en_ruta:   '<span class="chip chip-blue">🚛 En ruta</span>',
+      entregado: '<span class="chip chip-green">✅ Entregado</span>',
+      rechazo:   '<span class="chip chip-danger">❌ Rechazo</span>',
+    }[o.estado];
+    const ediTags = o.edi.map(e => `<span class="chip chip-gray" style="font-size:.59rem;padding:2px 6px">${e}</span>`).join('');
+    return `
+    <tr onclick="toggleDetail(${i})">
+      <td style="width:28px"><span style="color:var(--textm);font-size:.75rem">▶</span></td>
+      <td class="td-bold">${o.id}</td>
+      <td>${o.tienda}</td>
+      <td>${o.pais}</td>
+      <td>${o.prod}</td>
+      <td class="td-bold">${o.cajas.toLocaleString()}</td>
+      <td>${o.fecha} <span class="td-muted">${o.hora}</span></td>
+      <td>${o.piloto}</td>
+      <td style="white-space:nowrap">${ediTags}</td>
+      <td>${statusChip}</td>
+      <td><div class="row-actions">
+        <button class="tbl-btn" onclick="sendASN(event,'${o.id}')" title="Enviar ASN 856">📤</button>
+        <button class="tbl-btn" onclick="event.stopPropagation();showToast('📄 Abriendo orden…','warn')" title="Ver">👁</button>
+        <button class="tbl-btn tbl-btn-del" onclick="event.stopPropagation()" title="Eliminar">🗑</button>
+      </div></td>
+    </tr>
+    <tr><td colspan="11" style="padding:0;border-bottom:none">
+      <div class="order-detail" id="detail-${i}">
+        <div class="od-grid">
+          <div class="od-item"><div class="od-label">Lote origen</div><div class="od-val">BRC-2026-022</div></div>
+          <div class="od-item"><div class="od-label">Temperatura carga</div><div class="od-val">4°C ✅</div></div>
+          <div class="od-item"><div class="od-label">Rampa asignada</div><div class="od-val">Rampa 5002</div></div>
+          <div class="od-item"><div class="od-label">Placa vehículo</div><div class="od-val">P-123ABC</div></div>
+        </div>
+        <div class="od-actions">
+          <button class="btn btn-sm btn-outline" onclick="sendASN(event,'${o.id}')">📤 Enviar ASN 856</button>
+          <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();showToast('✅ Confirmación 855 enviada','success')">📋 Enviar 855</button>
+          <button class="btn btn-sm btn-primary" onclick="event.stopPropagation();window.location='modulo-finanzas.html'">🧾 Generar factura</button>
+        </div>
+      </div>
+    </td></tr>`;
+  }).join('');
+}
+
+function toggleDetail(i) {
+  const d = document.getElementById('detail-'+i);
+  d.classList.toggle('open');
+}
+
+function sendASN(e, id) {
+  e.stopPropagation();
+  showToast('📤 ASN 856 enviado para ' + id, 'success');
+}
+
+function renderDrivers() {
+  document.getElementById('driverGrid').innerHTML = DRIVERS.map(d => `
+  <div class="driver-card">
+    <div class="dc-header">
+      <div class="dc-avatar" style="background:${d.color}">${d.initials}</div>
+      <div><div class="dc-name">${d.name}</div><div class="dc-role">${d.role}</div></div>
+      <span class="chip ${d.disponible?'chip-green':'chip-blue'}" style="margin-left:auto">${d.disponible?'✅ Libre':'🚛 En ruta'}</span>
+    </div>
+    <div class="dc-stats">
+      <div class="dc-stat"><div class="dc-sv">${d.entregas}</div><div class="dc-sl">Entregas</div></div>
+      <div class="dc-stat"><div class="dc-sv">${d.kmMes.toLocaleString()}</div><div class="dc-sl">Km mes</div></div>
+      <div class="dc-stat"><div class="dc-sv">98%</div><div class="dc-sl">A tiempo</div></div>
+    </div>
+  </div>`).join('');
+}
+
+function renderEDILog() {
+  document.getElementById('ediLogTbody').innerHTML = EDI_LOG.map(e => {
+    const chip = e.estado === 'ok'
+      ? '<span class="chip chip-green">✅ OK</span>'
+      : '<span class="chip chip-danger">❌ Error</span>';
+    return `<tr>
+      <td class="td-mono td-muted">${e.ts}</td>
+      <td><span class="chip chip-purple" style="font-size:.68rem">${e.tipo}</span></td>
+      <td style="color:${e.dir.includes('↓')?'var(--info)':'var(--jade)'};font-weight:600;font-size:.78rem">${e.dir}</td>
+      <td class="td-mono">${e.orden}</td>
+      <td>${chip}</td>
+      <td style="font-size:.78rem">${e.msg}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCalStrip() {
+  const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const strip = document.getElementById('calStrip');
+  for (let i = -3; i <= 7; i++) {
+    const d = new Date(2026, 2, 1 + i);
+    const dow = days[d.getDay()];
+    const num = d.getDate();
+    const hasOrders = [1,2,5,7].includes(num);
+    const isToday = i === 0;
+    strip.innerHTML += `<div class="cal-day ${isToday?'today':''} ${hasOrders?'has-orders':''}">
+      <div class="cd-dow">${dow}</div>
+      <div class="cd-num">${num}</div>
+      ${hasOrders ? '<div class="cd-cnt">'+Math.floor(Math.random()*5+1)+' ent.</div>' : '<div class="cd-cnt" style="opacity:.3">—</div>'}
+    </div>`;
+  }
+}
+
+function filterOrders(btn, type) {
+  document.querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function openLTab(id) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.ltab').forEach(t => t.classList.remove('on'));
+  document.getElementById('tab-'+id).classList.add('on');
+  document.getElementById('ltab-'+id).classList.add('on');
+}
+
+function syncEDI() {
+  showToast('🔄 Sincronizando con Walmart EDI…', 'warn');
+  const el = document.getElementById('lastSync');
+  setTimeout(() => { el.textContent = 'Ahora mismo'; showToast('✅ EDI sincronizado · 2 órdenes nuevas', 'success'); }, 2000);
+}
+
+function createOrder() {
+  closeModal('newOrderModal');
+  showToast('✅ Orden creada y EDI 855 enviado', 'success');
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+let toastTimer;
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+renderCalStrip();
+renderOrders();
+renderDrivers();
+renderEDILog();
+</script>
+</body>
+</html>
