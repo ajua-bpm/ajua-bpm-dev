@@ -1,6 +1,6 @@
-// AJÚA BPM — Service Worker v2.0 — 01/03/2026 20:49 GT
-// CACHE BUMP: v1 → v2 para forzar eliminación del caché viejo
-const CACHE_NAME = 'ajua-bpm-prod-v2';
+// AJÚA BPM — Service Worker v3.0 — 02/03/2026 build-12
+// CACHE BUMP: v2 → v3 para forzar eliminación del caché con build-12
+const CACHE_NAME = 'ajua-bpm-prod-v3'; // bumped 02/03/2026 build-12
 const OFFLINE_URL = '/';
 
 const PRECACHE = [
