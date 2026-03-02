@@ -3716,12 +3716,44 @@ function _repRenderDetalle() {
 }
 
 function repExport() {
-  if(!_repDatos){toast('\u26a0 Genera el reporte primero',true);return;}
-  const d=_repDatos;
-  const rows=[['AJ\u00daA BPM \u2014 P&L'],['Per\u00edodo:',d.desde,'\u2192',d.hasta],[],['INGRESOS'],['Canal','Venta Neta Q','IVA Q','Retenci\u00f3n Q','A Cobrar Q','LBS'],['Walmart GT',d.wTotalNeto.toFixed(2),d.wTotalIVA.toFixed(2),d.wTotalRet.toFixed(2),d.wTotalACobrar.toFixed(2),d.wTotalLbs.toFixed(1)],['Local GT',d.gtTotalNeto.toFixed(2),d.gtTotalIVA.toFixed(2),d.gtTotalRet.toFixed(2),d.gtTotalACobrar.toFixed(2),d.gtTotalLbs.toFixed(1)],['Exportaci\u00f3n',d.intTotal.toFixed(2),'0','0',d.intTotal.toFixed(2),d.intTotalLbs.toFixed(1)],[],[],['POR PRODUCTO'],['Producto','LBS','Costo Q','Lote','Costo/lb Q','Venta Neta Q','Utilidad Q','Margen %'],...Object.values(d.porProducto).map(p=>[p.nombre,p.lbs.toFixed(1),p.costo.toFixed(2),p.lote,p.costoLb.toFixed(4),p.ventaNeta.toFixed(2),p.margenBruto.toFixed(2),p.margenPct.toFixed(1)+'%']),[''],['GASTOS'],['Semanales',(d.gastosOp-d.gastosD).toFixed(2)],['Diarios',d.gastosD.toFixed(2)],['TOTAL',d.gastosOp.toFixed(2)],[],['RESULTADO'],['Venta Neta',d.totalVentaNeta.toFixed(2)],['Costo',d.totalCostoVendido.toFixed(2)],['Utilidad Bruta',d.utilidadBruta.toFixed(2)],['Gastos Op.',d.gastosOp.toFixed(2)],['UTILIDAD NETA',d.utilidadNeta.toFixed(2)]];
-  let csv='\uFEFF';
-  rows.forEach(r=>{csv+=r.map(v=>'"'+String(v||'').replace(/"/g,'\"')+'"').join(',')+'
-';});
+  if (!_repDatos) { toast('⚠ Genera el reporte primero', true); return; }
+  const d = _repDatos;
+  const rows = [
+    ['AJÚA BPM — P&L'],
+    ['Período:', d.desde, '→', d.hasta],
+    [],
+    ['INGRESOS'],
+    ['Canal','Venta Neta Q','IVA Q','Retención Q','A Cobrar Q','LBS'],
+    ['Walmart GT', d.wTotalNeto.toFixed(2), d.wTotalIVA.toFixed(2), d.wTotalRet.toFixed(2), d.wTotalACobrar.toFixed(2), d.wTotalLbs.toFixed(1)],
+    ['Local GT',   d.gtTotalNeto.toFixed(2), d.gtTotalIVA.toFixed(2), d.gtTotalRet.toFixed(2), d.gtTotalACobrar.toFixed(2), d.gtTotalLbs.toFixed(1)],
+    ['Exportación', d.intTotal.toFixed(2), '0', '0', d.intTotal.toFixed(2), d.intTotalLbs.toFixed(1)],
+    [],
+    ['POR PRODUCTO'],
+    ['Producto','LBS','Costo Q','Lote','Costo/lb Q','Venta Neta Q','Utilidad Q','Margen %'],
+    ...Object.values(d.porProducto).map(p => [p.nombre, p.lbs.toFixed(1), p.costo.toFixed(2), p.lote, p.costoLb.toFixed(4), p.ventaNeta.toFixed(2), p.margenBruto.toFixed(2), p.margenPct.toFixed(1)+'%']),
+    [],
+    ['GASTOS'],
+    ['Semanales', (d.gastosOp - d.gastosD).toFixed(2)],
+    ['Diarios',   d.gastosD.toFixed(2)],
+    ['TOTAL',     d.gastosOp.toFixed(2)],
+    [],
+    ['RESULTADO'],
+    ['Venta Neta',     d.totalVentaNeta.toFixed(2)],
+    ['Costo',          d.totalCostoVendido.toFixed(2)],
+    ['Utilidad Bruta', d.utilidadBruta.toFixed(2)],
+    ['Gastos Op.',     d.gastosOp.toFixed(2)],
+    ['UTILIDAD NETA',  d.utilidadNeta.toFixed(2)],
+  ];
+  let csv = '﻿';
+  rows.forEach(r => { csv += r.map(v => '"' + String(v || '').replace(/"/g, '\"') + '"').join(',') + '\n'; });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(blob),
+    download: 'PL_' + d.desde + '_' + d.hasta + '.csv'
+  });
+  a.click();
+  toast('✅ P&L exportado');
+});
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:'PL_'+d.desde+'_'+d.hasta+'.csv'});
   a.click(); toast('\u2705 P&L exportado');
